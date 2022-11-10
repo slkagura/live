@@ -3,7 +3,6 @@ package xyz.slkagura.live;
 import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.media.Image;
-import android.media.ImageReader;
 import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
 import android.util.Size;
@@ -144,7 +143,7 @@ public class LiveEngine implements LiveEngineHandler {
         encodeFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
         syncCodec2.createEncoder(encodeFormat);
         CameraHelper cameraHelper = getCameraHelper();
-        cameraHelper.createImageReader(reader -> {
+        cameraHelper.notifyCreateImageReader(reader -> {
             Image image = reader.acquireLatestImage();
             if (image != null) {
                 byte[] mImageData = ConvertUtil.toByteArray(image);

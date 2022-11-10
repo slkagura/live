@@ -1,7 +1,5 @@
 package xyz.slkagura.ui.view.main;
 
-import android.media.MediaCodec;
-import android.media.MediaCodecInfo;
 import android.view.TextureView;
 
 import androidx.annotation.NonNull;
