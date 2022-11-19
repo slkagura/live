@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.locks.ReentrantLock;
 
 import xyz.slkagura.camera.interfaces.ICameraCaptureSessionCaptureCallback;
 import xyz.slkagura.camera.interfaces.ICameraCaptureSessionStateCallback;
@@ -86,14 +87,25 @@ public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureS
         mCallback = callback;
     }
     
-    public void notifyOpenCamera() {
-        LogUtil.v(TAG, "notifyOpenCamera()");
+    public void notifyStartThread() {
+        LogUtil.v(TAG, "notifyStartThread()");
+        startThread();
     }
     
-    public void notifyCreateImageReader(ImageReader.OnImageAvailableListener listener) {
-        mImageReader = ImageReader.newInstance(mSize.getWidth(), mSize.getHeight(), ImageFormat.YUV_420_888, 2);
-        mImageReader.setOnImageAvailableListener(listener, mHandler);
-        notifyAddOutput(mImageReader.getSurface());
+    public void notifyCloseThread() {
+        LogUtil.v(TAG, "notifyCloseThread()");
+        stopThread();
+    }
+    
+    public void notifyOpenCamera() {
+        LogUtil.v(TAG, "notifyOpenCamera()");
+        createDevice();
+    }
+    
+    public void notifyCloseCamera() {
+        LogUtil.v(TAG, "notifyCloseCamera()");
+        closeSession();
+        closeDevice();
     }
     
     public void notifyAddOutput(Surface surface) {
@@ -104,9 +116,12 @@ public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureS
         if (mOutputs == null) {
             mOutputs = new ArrayList<>();
         }
-        mOutputs.add(surface);
-        if (mSession != null) {
+        boolean isRunning = mSession != null;
+        if (isRunning) {
             closeSession();
+        }
+        mOutputs.add(surface);
+        if (isRunning) {
             createSession();
         }
     }
@@ -122,15 +137,10 @@ public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureS
         }
     }
     
-    public void notifyCloseCamera() {
-        LogUtil.v(TAG, "notifyCloseCamera()");
-        closeSession();
-        closeDevice();
-    }
-    
-    public void notifyCloseThread() {
-        LogUtil.v(TAG, "notifyCloseThread()");
-        stopThread();
+    public void notifyCreateImageReader(ImageReader.OnImageAvailableListener listener) {
+        mImageReader = ImageReader.newInstance(mSize.getWidth(), mSize.getHeight(), ImageFormat.YUV_420_888, 2);
+        mImageReader.setOnImageAvailableListener(listener, mHandler);
+        notifyAddOutput(mImageReader.getSurface());
     }
     
     private void startThread() {
@@ -197,13 +207,13 @@ public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureS
     @Override
     public void onDisconnected(@NonNull CameraDevice camera) {
         LogUtil.v(TAG, "onDisconnected()");
-        notifyCloseCamera();
+        closeDevice();
     }
     
     @Override
     public void onError(@NonNull CameraDevice camera, int error) {
         LogUtil.v(TAG, "onError()");
-        notifyCloseCamera();
+        closeDevice();
     }
     
     private void createSession() {
