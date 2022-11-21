@@ -18,24 +18,14 @@
         android:layout_height="match_parent"
         android:background="@color/white"
         >
-        <FrameLayout
-            android:id="@+id/fragment_decode_fl_preview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/fragment_decode_btn_camera"
-            app:layout_constraintStart_toStartOf="parent"
+        <include
+            android:id="@+id/fragment_main_component_stream"
+            layout="@layout/component_stream_panel"
+            android:layout_width="0dp"
+            android:layout_height="240dp"
             app:layout_constraintEnd_toEndOf="parent"
-            />
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/fragment_decode_btn_camera"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="@{() -> handler.onLive()}"
-            android:text="Decode"
-            android:gravity="center"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

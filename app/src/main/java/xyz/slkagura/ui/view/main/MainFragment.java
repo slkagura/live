@@ -10,9 +10,10 @@ import xyz.slkagura.common.utils.ViewModelUtil;
 import xyz.slkagura.live.tag.LiveState;
 import xyz.slkagura.ui.BR;
 import xyz.slkagura.ui.R;
+import xyz.slkagura.ui.component.StreamPanel;
 import xyz.slkagura.ui.databinding.FragmentMainBinding;
 
-public class MainFragment extends BaseBindingFragment<MainViewModel, FragmentMainBinding> implements MainViewModel.IHandler, ICameraHelperCallback {
+public class MainFragment extends BaseBindingFragment<MainViewModel, FragmentMainBinding> implements MainViewModel.IHandler, StreamPanel.IHandler, ICameraHelperCallback {
     public static MainFragment getInstance() {
         MainFragment fragment = new MainFragment();
         fragment.mContainerId = R.layout.fragment_main;
@@ -30,6 +31,8 @@ public class MainFragment extends BaseBindingFragment<MainViewModel, FragmentMai
     protected void initViewDataBinding() {
         mBinding.setVm(mViewModel);
         mBinding.setHandler(this);
+        mBinding.fragmentMainComponentStream.setVm(new StreamPanel());
+        mBinding.fragmentMainComponentStream.setHandler(this);
     }
     
     @Override
@@ -43,11 +46,16 @@ public class MainFragment extends BaseBindingFragment<MainViewModel, FragmentMai
     }
     
     @Override
+    public void onCommandClick() {
+    
+    }
+    
+    @Override
     public void onLive() {
         if (mViewModel.mPreState == LiveState.CREATED) {
             TextureView textureView = mViewModel.resumeLive();
             if (textureView != null) {
-                mBinding.fragmentDecodeFlPreview.addView(textureView);
+                mBinding.fragmentMainComponentStream.componentStreamFlStream.addView(textureView);
             }
         } else {
             onStopLive();
@@ -57,6 +65,6 @@ public class MainFragment extends BaseBindingFragment<MainViewModel, FragmentMai
     @Override
     public void onStopLive() {
         mViewModel.pauseLive();
-        mBinding.fragmentDecodeFlPreview.removeAllViews();
+        mBinding.fragmentMainComponentStream.componentStreamFlStream.removeAllViews();
     }
 }

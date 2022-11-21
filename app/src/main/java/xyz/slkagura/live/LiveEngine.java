@@ -10,6 +10,7 @@ import android.view.Surface;
 import android.view.TextureView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,13 +20,17 @@ import xyz.slkagura.camera.CameraHelper;
 import xyz.slkagura.codec.SyncCodec;
 import xyz.slkagura.codec.SyncCodec2;
 import xyz.slkagura.codec.bean.Frame;
+import xyz.slkagura.common.lifecycle.NonnullLiveData;
 import xyz.slkagura.common.utils.ContextUtil;
 import xyz.slkagura.common.utils.ConvertUtil;
 import xyz.slkagura.live.bean.LiveUser;
 import xyz.slkagura.live.interfaces.LiveEngineHandler;
+import xyz.slkagura.live.tag.LiveState;
 
 public class LiveEngine implements LiveEngineHandler {
     private static final List<LiveEngine> INSTANCES = new ArrayList<>();
+    
+    private final MutableLiveData<Integer> mLiveStatus = new MutableLiveData<>(LiveState.NULL);
     
     private final LiveUser mLocalUser = new LiveUser("Local");
     
@@ -52,6 +57,10 @@ public class LiveEngine implements LiveEngineHandler {
             INSTANCES.add(engine);
         }
         return engine;
+    }
+    
+    public MutableLiveData<Integer> getLiveStatus() {
+        return mLiveStatus;
     }
     
     private CameraHelper getCameraHelper() {
