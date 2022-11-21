@@ -19,6 +19,7 @@ import android.view.Surface;
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.locks.ReentrantLock;
@@ -57,6 +58,11 @@ public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureS
      * 后台线程对应 Handler
      */
     private Handler mHandler;
+    
+    /**
+     * 线程锁
+     */
+    private final ReentrantLock mLock = new ReentrantLock();
     
     /**
      * 相机设备
@@ -108,9 +114,9 @@ public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureS
         closeDevice();
     }
     
-    public void notifyAddOutput(Surface surface) {
+    public void notifyAddOutput(Surface... surfaces) {
         LogUtil.v(TAG, "notifyAddOutput()");
-        if (surface == null || !surface.isValid()) {
+        if (surfaces == null || surfaces.length < 1) {
             return;
         }
         if (mOutputs == null) {
@@ -120,20 +126,24 @@ public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureS
         if (isRunning) {
             closeSession();
         }
-        mOutputs.add(surface);
+        mOutputs.addAll(Arrays.asList(surfaces));
         if (isRunning) {
             createSession();
         }
     }
     
-    public void notifyRemoveOutput(Surface surface) {
+    public void notifyRemoveOutput(Surface... surfaces) {
         LogUtil.v(TAG, "notifyRemoveOutput()");
-        if (mOutputs != null && surface != null) {
-            mOutputs.remove(surface);
-            if (mSession != null) {
-                closeSession();
-                createSession();
-            }
+        if (mOutputs == null || surfaces == null || surfaces.length < 1) {
+            return;
+        }
+        boolean isRunning = mSession != null;
+        if (isRunning) {
+            closeSession();
+        }
+        mOutputs.removeAll(Arrays.asList(surfaces));
+        if (isRunning) {
+            createSession();
         }
     }
     
