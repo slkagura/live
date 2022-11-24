@@ -1,4 +1,4 @@
-package xyz.slkagura.ui.view.main;
+package xyz.slkagura.ui.view.live;
 
 import android.view.TextureView;
 
@@ -11,24 +11,26 @@ import xyz.slkagura.live.tag.LiveState;
 import xyz.slkagura.ui.BR;
 import xyz.slkagura.ui.R;
 import xyz.slkagura.ui.component.StreamPanel;
-import xyz.slkagura.ui.databinding.FragmentMainBinding;
+import xyz.slkagura.ui.databinding.FragmentLiveBinding;
 
-public class MainFragment extends BaseBindingFragment<MainViewModel, FragmentMainBinding> implements MainViewModel.IHandler, StreamPanel.IHandler, ICameraHelperCallback {
-    public static MainFragment getInstance() {
-        MainFragment fragment = new MainFragment();
-        fragment.mContainerId = R.layout.fragment_main;
-        fragment.mVariableId = BR.vm;
-        return fragment;
+public class LiveFragment extends BaseBindingFragment<LiveViewModel, FragmentLiveBinding> implements LiveViewModel.IHandler, StreamPanel.IHandler, ICameraHelperCallback {
+    public static LiveFragment getInstance() {
+        return new LiveFragment();
+    }
+    
+    @Override
+    protected int initLayoutId() {
+        return R.layout.fragment_live;
     }
     
     @NonNull
     @Override
-    protected MainViewModel initViewModel() {
-        return ViewModelUtil.get(this, MainViewModel.class);
+    protected LiveViewModel initDataBinding() {
+        return ViewModelUtil.get(this, LiveViewModel.class);
     }
     
     @Override
-    protected void initViewDataBinding() {
+    protected void initViewBinding() {
         mBinding.setVm(mViewModel);
         mBinding.setHandler(this);
         mBinding.fragmentMainComponentStream.setVm(new StreamPanel());
@@ -47,7 +49,6 @@ public class MainFragment extends BaseBindingFragment<MainViewModel, FragmentMai
     
     @Override
     public void onCommandClick() {
-    
     }
     
     @Override

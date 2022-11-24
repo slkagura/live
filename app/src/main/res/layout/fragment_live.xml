@@ -6,11 +6,11 @@
     <data>
         <variable
             name="vm"
-            type="xyz.slkagura.ui.view.main.MainViewModel"
+            type="xyz.slkagura.ui.view.live.LiveViewModel"
             />
         <variable
             name="handler"
-            type="xyz.slkagura.ui.view.main.MainViewModel.IHandler"
+            type="xyz.slkagura.ui.view.live.LiveViewModel.IHandler"
             />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout

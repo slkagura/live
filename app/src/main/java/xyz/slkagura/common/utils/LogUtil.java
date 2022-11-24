@@ -8,7 +8,7 @@ public class LogUtil {
     private static final boolean LOG_ENABLE = true;
     
     @Level
-    private static int sLevel;
+    private static int sLevel = Level.Debug;
     
     public static void setLevel(@Level int level) {
         sLevel = level;
@@ -40,18 +40,17 @@ public class LogUtil {
         } else {
             message = (String) messages[0];
         }
-        if (message == null || message.length() < 1) {
-            switch (level) {
-                case Level.Verbose:
-                    Log.v(tag, message);
-                case Level.Debug:
-                    Log.d(tag, message);
-                case Level.Info:
-                    Log.i(tag, message);
-                case Level.Warn:
-                    Log.w(tag, message);
-                case Level.Error:
-                    Log.e(tag, message);
+        if (message != null || message.length() > 0) {
+            if (level == Level.Verbose) {
+                Log.v(tag, message);
+            } else if (level == Level.Debug) {
+                Log.d(tag, message);
+            } else if (level == Level.Info) {
+                Log.i(tag, message);
+            } else if (level == Level.Warn) {
+                Log.w(tag, message);
+            } else if (level == Level.Error) {
+                Log.e(tag, message);
             }
         }
     }

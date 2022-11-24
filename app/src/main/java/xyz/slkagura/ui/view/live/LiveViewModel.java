@@ -1,4 +1,4 @@
-package xyz.slkagura.ui.view.main;
+package xyz.slkagura.ui.view.live;
 
 import android.content.Context;
 import android.view.TextureView;
@@ -8,7 +8,7 @@ import xyz.slkagura.common.base.BaseRepository;
 import xyz.slkagura.live.LiveEngine;
 import xyz.slkagura.live.tag.LiveState;
 
-public class MainViewModel extends BaseBindingViewModel {
+public class LiveViewModel extends BaseBindingViewModel {
     private final LiveEngine mLiveEngine = LiveEngine.create(0);
     
     @LiveState
