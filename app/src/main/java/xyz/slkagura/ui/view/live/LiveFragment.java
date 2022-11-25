@@ -8,7 +8,6 @@ import xyz.slkagura.camera.interfaces.ICameraHelperCallback;
 import xyz.slkagura.common.base.BaseBindingFragment;
 import xyz.slkagura.common.utils.ViewModelUtil;
 import xyz.slkagura.live.tag.LiveState;
-import xyz.slkagura.ui.BR;
 import xyz.slkagura.ui.R;
 import xyz.slkagura.ui.component.StreamPanel;
 import xyz.slkagura.ui.databinding.FragmentLiveBinding;

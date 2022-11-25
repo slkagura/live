@@ -35,7 +35,7 @@ public class MainActivity extends BaseBindingActivity<MainViewModel, ActivityMai
     protected void onResume() {
         super.onResume();
         // initFragment();
-        // onStartClick();
+        onStartClick();
     }
     
     @Override
@@ -43,22 +43,15 @@ public class MainActivity extends BaseBindingActivity<MainViewModel, ActivityMai
         TaskQueue consumer = new TaskQueue();
         for (int i = 0; i < 100; i++) {
             final int id = i;
-            if (Math.random() < 0.3D) {
-                consumer.post(() -> {
-                    LogUtil.d(MAIN_ACTIVITY_TAG, "Sync task-", id, " start");
-                    try {
-                        Thread.sleep(3000L);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    LogUtil.d(MAIN_ACTIVITY_TAG, "Sync task-", id, " end");
-                    consumer.syncComplete();
-                }, true);
-            } else {
-                consumer.post(() -> {
-                    LogUtil.d(MAIN_ACTIVITY_TAG, "Async task-", id, " start");
-                });
-            }
+            boolean isSync = Math.random() < 0.2D;
+            String groupId = isSync ? "group-1" : "group-2";
+            consumer.offer(() -> {
+                LogUtil.d(MAIN_ACTIVITY_TAG, "task: ", id, " group: ", groupId, " sync: ", String.valueOf(isSync), " start: ", System.nanoTime());
+                if (isSync) {
+                    consumer.unlock(groupId);
+                }
+                LogUtil.d(MAIN_ACTIVITY_TAG, "task: ", id, " group: ", groupId, " sync: ", String.valueOf(isSync), " end: ", System.nanoTime());
+            }, groupId, isSync);
         }
     }
     

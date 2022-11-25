@@ -1,14 +1,17 @@
 package xyz.slkagura.thread;
 
+import androidx.annotation.NonNull;
+
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
+
+import xyz.slkagura.common.utils.LogUtil;
 
 public class TaskQueue {
-    private int mCapacity = 10;
+    private static final String TASK_QUEUE_TAG = TaskQueue.class.getSimpleName();
     
     /**
      * 任务队列
@@ -18,78 +21,60 @@ public class TaskQueue {
     /**
      * 线程池
      */
-    private final ExecutorService mExecutor = new ThreadPoolExecutor(1, 3, 0L, TimeUnit.MILLISECONDS, mQueue);
+    private final ExecutorService mExecutor = new ThreadPoolExecutor(10, 10, 0L, TimeUnit.MILLISECONDS, mQueue);
     
     /**
-     * TaskQueue的锁
+     * 同步任务组的锁
      */
-    private final ReentrantLock mLock = new ReentrantLock();
+    private final ConcurrentHashMap<String, TaskLock> mLocks = new ConcurrentHashMap<>();
     
-    /**
-     * TaskQueue的执行条件
-     */
-    private final Condition mQueryable = mLock.newCondition();
-    
-    /**
-     * 正在执行同步任务
-     */
-    private boolean mSyncTask = false;
-    
-    public void post(Runnable runnable, boolean syncTask) {
-        mLock.lock();
-        try {
-            if (mSyncTask) {
-                mQueryable.await();
+    public void offer(@NonNull Runnable runnable, @NonNull String group, boolean isSync) {
+        Runnable task = runnable;
+        if (isSync) {
+            TaskLock lock = mLocks.get(group);
+            if (lock == null) {
+                lock = new TaskLock();
             }
-            if (syncTask) {
-                mExecutor.execute(() -> {
-                    syncStart();
+            mLocks.put(group, lock);
+            final TaskLock curLock = lock;
+            task = () -> {
+                try {
+                    if (curLock.mIsRunning) {
+                        curLock.mCondition.await();
+                    }
+                    curLock.mLock.lock();
+                    curLock.mIsRunning = true;
+                    curLock.mLock.unlock();
                     runnable.run();
-                });
-            } else {
-                mExecutor.execute(runnable);
-            }
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } finally {
-            mLock.unlock();
-        }
-    }
-    
-    public void post(Runnable runnable) {
-        post(runnable, false);
-    }
-    
-    public void syncStart() {
-        mLock.lock();
-        mSyncTask = true;
-        mLock.unlock();
-    }
-    
-    public void syncComplete() {
-        mLock.lock();
-        mSyncTask = false;
-        mQueryable.signal();
-        mLock.unlock();
-    }
-    
-    public void setCapacity(int capacity) {
-        mCapacity = capacity;
-    }
-    
-    public void close() {
-        mLock.lock();
-        mExecutor.execute(() -> {
-            try {
-                mExecutor.shutdown();
-                while (!mExecutor.awaitTermination(100, TimeUnit.MILLISECONDS)) {
+                } catch (Exception e) {
+                    LogUtil.e(TASK_QUEUE_TAG, e.getMessage());
+                    reset(curLock);
                 }
-                mLock.unlock();
-            } catch (InterruptedException e) {
-                mExecutor.shutdownNow();
-                mLock.unlock();
-                throw new RuntimeException(e);
-            }
-        });
+            };
+        }
+        mExecutor.execute(task);
+    }
+    
+    public void unlock(String group) {
+        TaskLock lock = mLocks.get(group);
+        if (lock == null) {
+            return;
+        }
+        reset(lock);
+    }
+    
+    public void release(String group) {
+        TaskLock lock = mLocks.remove(group);
+        if (lock == null) {
+            return;
+        }
+        reset(lock);
+    }
+    
+    private void reset(TaskLock lock) {
+        lock.mLock.lock();
+        lock.mIsRunning = false;
+        lock.mCondition.signal();
+        lock.mLock.unlock();
     }
 }
