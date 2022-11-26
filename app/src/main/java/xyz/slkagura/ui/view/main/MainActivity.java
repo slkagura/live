@@ -35,7 +35,7 @@ public class MainActivity extends BaseBindingActivity<MainViewModel, ActivityMai
     protected void onResume() {
         super.onResume();
         // initFragment();
-        onStartClick();
+        // onStartClick();
     }
     
     @Override

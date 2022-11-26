@@ -29,7 +29,7 @@ public abstract class BaseBindingActivity<VM extends BaseBindingViewModel, B ext
         super.onCreate(savedInstanceState);
         setContentView(mLayoutId);
         mViewModel = initDataBinding();
-        mBinding = DataBindingUtil.inflate(getLayoutInflater(), mLayoutId, null, true);
+        mBinding = DataBindingUtil.setContentView(this, mLayoutId);
         mRoot = mBinding.getRoot();
         mContext = mRoot.getContext();
         // 支持 LiveData 绑定 xml，数据改变，UI 自动会更新
