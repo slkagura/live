@@ -47,6 +47,11 @@ public class MainActivity extends BaseBindingActivity<MainViewModel, ActivityMai
             String groupId = isSync ? "group-1" : "group-2";
             consumer.offer(() -> {
                 LogUtil.d(MAIN_ACTIVITY_TAG, "task: ", id, " group: ", groupId, " sync: ", String.valueOf(isSync), " start: ", System.nanoTime());
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
                 if (isSync) {
                     consumer.unlock(groupId);
                 }
