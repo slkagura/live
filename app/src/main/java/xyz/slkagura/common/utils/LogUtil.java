@@ -40,7 +40,7 @@ public class LogUtil {
         } else {
             message = (String) messages[0];
         }
-        if (message != null || message.length() > 0) {
+        if (message != null && message.length() > 0) {
             if (level == Level.Verbose) {
                 Log.v(tag, message);
             } else if (level == Level.Debug) {

@@ -43,20 +43,21 @@ public class MainActivity extends BaseBindingActivity<MainViewModel, ActivityMai
         TaskQueue consumer = new TaskQueue();
         for (int i = 0; i < 100; i++) {
             final int id = i;
-            boolean isSync = Math.random() < 0.2D;
+            boolean isSync = Math.random() < 0.9D;
             String groupId = isSync ? "group-1" : "group-2";
             consumer.offer(() -> {
                 LogUtil.d(MAIN_ACTIVITY_TAG, "task: ", id, " group: ", groupId, " sync: ", String.valueOf(isSync), " start: ", System.nanoTime());
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                if (isSync) {
-                    consumer.unlock(groupId);
-                }
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    consumer.unlock();
+                    LogUtil.d(MAIN_ACTIVITY_TAG, "task: ", id, " group: ", groupId, " sync: ", String.valueOf(isSync), " unlock: ", System.nanoTime());
+                }).start();
                 LogUtil.d(MAIN_ACTIVITY_TAG, "task: ", id, " group: ", groupId, " sync: ", String.valueOf(isSync), " end: ", System.nanoTime());
-            }, groupId, isSync);
+            });
         }
     }
     
