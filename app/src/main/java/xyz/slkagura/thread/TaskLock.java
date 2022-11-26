@@ -12,7 +12,12 @@ public class TaskLock {
     /**
      * TaskQueue的执行条件
      */
-    public final Condition mCondition = mLock.newCondition();
+    public final Condition mCanRun = mLock.newCondition();
+    
+    /**
+     * TaskQueue的结束条件
+     */
+    public final Condition mCanFinish = mLock.newCondition();
     
     /**
      * 正在执行同步任务

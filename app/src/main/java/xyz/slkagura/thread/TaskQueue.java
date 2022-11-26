@@ -40,12 +40,14 @@ public class TaskQueue {
             task = () -> {
                 try {
                     if (curLock.mIsRunning) {
-                        curLock.mCondition.await();
+                        curLock.mCanRun.await();
                     }
                     curLock.mLock.lock();
                     curLock.mIsRunning = true;
-                    curLock.mLock.unlock();
                     runnable.run();
+                    curLock.mLock.unlock();
+                    curLock.mCanFinish.await();
+                    curLock.mCanRun.signal();
                 } catch (Exception e) {
                     LogUtil.e(TASK_QUEUE_TAG, e.getMessage());
                     reset(curLock);
@@ -74,7 +76,7 @@ public class TaskQueue {
     private void reset(TaskLock lock) {
         lock.mLock.lock();
         lock.mIsRunning = false;
-        lock.mCondition.signal();
+        lock.mCanFinish.signal();
         lock.mLock.unlock();
     }
 }
