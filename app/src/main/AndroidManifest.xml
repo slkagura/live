@@ -23,6 +23,7 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -39,5 +40,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".view.camera.CameraActivity"
+            android:exported="false"
+            />
+        <activity
+            android:name=".view.codec.CodecActivity"
+            android:exported="false"
+            />
     </application>
 </manifest>

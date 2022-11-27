@@ -1,17 +1,19 @@
 package xyz.slkagura.ui.view.main;
 
+import android.content.Intent;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import xyz.slkagura.common.base.BaseBindingActivity;
-import xyz.slkagura.common.utils.LogUtil;
 import xyz.slkagura.common.utils.ViewModelUtil;
-import xyz.slkagura.thread.TaskQueue;
 import xyz.slkagura.ui.R;
 import xyz.slkagura.ui.databinding.ActivityMainBinding;
+import xyz.slkagura.ui.view.camera.CameraActivity;
+import xyz.slkagura.ui.view.codec.CodecActivity;
 import xyz.slkagura.ui.view.live.LiveFragment;
 
-public class MainActivity extends BaseBindingActivity<MainViewModel, ActivityMainBinding> implements MainViewModel.Handler {
+public class MainActivity extends BaseBindingActivity<MainViewModel, ActivityMainBinding> {
     private static final String MAIN_ACTIVITY_TAG = MainActivity.class.getSimpleName();
     
     @Override
@@ -27,38 +29,23 @@ public class MainActivity extends BaseBindingActivity<MainViewModel, ActivityMai
     
     @Override
     protected void initViewBinding() {
+        mBinding.setV(this);
         mBinding.setVm(mViewModel);
-        mBinding.setHandler(this);
     }
     
     @Override
     protected void onResume() {
         super.onResume();
-        // initFragment();
-        // onStartClick();
     }
     
-    @Override
-    public void onStartClick() {
-        TaskQueue consumer = new TaskQueue();
-        for (int i = 0; i < 100; i++) {
-            final int id = i;
-            boolean isSync = Math.random() < 0.9D;
-            String groupId = isSync ? "group-1" : "group-2";
-            consumer.offer(() -> {
-                LogUtil.d(MAIN_ACTIVITY_TAG, "task: ", id, " group: ", groupId, " sync: ", String.valueOf(isSync), " start: ", System.nanoTime());
-                new Thread(() -> {
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    consumer.unlock();
-                    LogUtil.d(MAIN_ACTIVITY_TAG, "task: ", id, " group: ", groupId, " sync: ", String.valueOf(isSync), " unlock: ", System.nanoTime());
-                }).start();
-                LogUtil.d(MAIN_ACTIVITY_TAG, "task: ", id, " group: ", groupId, " sync: ", String.valueOf(isSync), " end: ", System.nanoTime());
-            });
-        }
+    public void onCameraClick() {
+        Intent intent = new Intent(this, CameraActivity.class);
+        startActivity(intent);
+    }
+    
+    public void onCodecClick() {
+        Intent intent = new Intent(this, CodecActivity.class);
+        startActivity(intent);
     }
     
     private void initFragment() {

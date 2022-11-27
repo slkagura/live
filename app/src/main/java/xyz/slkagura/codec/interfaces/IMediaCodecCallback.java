@@ -8,8 +8,6 @@ import androidx.annotation.NonNull;
 import java.util.concurrent.ArrayBlockingQueue;
 
 public interface IMediaCodecCallback {
-    default void onQueueAvailable(ArrayBlockingQueue<byte[]> queue) {}
-    
     default void onInputBufferAvailable(@NonNull MediaCodec codec, int index) {
     }
     

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="v"
+            type="xyz.slkagura.ui.view.camera.CameraActivity"
+            />
+        <variable
+            name="vm"
+            type="xyz.slkagura.ui.view.camera.CameraViewModel"
+            />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/activity_camera_cl_root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        >
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

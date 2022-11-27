@@ -10,5 +10,7 @@ public abstract class BaseBindingViewModel extends ViewModel implements Lifecycl
     
     public BaseBindingViewModel() {}
     
-    protected abstract BaseRepository initDataSource(Context context);
+    protected BaseRepository initDataSource(Context context) {
+        return null;
+    }
 }

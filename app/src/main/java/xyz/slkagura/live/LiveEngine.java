@@ -20,7 +20,6 @@ import xyz.slkagura.camera.CameraHelper;
 import xyz.slkagura.codec.SyncCodec;
 import xyz.slkagura.codec.SyncCodec2;
 import xyz.slkagura.codec.bean.Frame;
-import xyz.slkagura.common.lifecycle.NonnullLiveData;
 import xyz.slkagura.common.utils.ContextUtil;
 import xyz.slkagura.common.utils.ConvertUtil;
 import xyz.slkagura.live.bean.LiveUser;
@@ -112,8 +111,8 @@ public class LiveEngine implements LiveEngineHandler {
             @Override
             public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surfaceTexture, int width, int height) {
                 mSurface = new Surface(surfaceTexture);
-                cameraHelper.notifyAddOutput(mSurface);
-                cameraHelper.notifyOpenCamera();
+                cameraHelper.notifyAddOutputs(mSurface);
+                cameraHelper.notifyCreateDevice();
             }
             
             @Override
@@ -122,7 +121,7 @@ public class LiveEngine implements LiveEngineHandler {
             
             @Override
             public boolean onSurfaceTextureDestroyed(@NonNull SurfaceTexture surfaceTexture) {
-                cameraHelper.notifyRemoveOutput(mSurface);
+                cameraHelper.notifyRemoveOutputs(mSurface);
                 return false;
             }
             
@@ -137,7 +136,7 @@ public class LiveEngine implements LiveEngineHandler {
     public void stopLocalView() {
         if (mLocalUser.getPreview() != null) {
             CameraHelper cameraHelper = getCameraHelper();
-            cameraHelper.notifyRemoveOutput(mSurface);
+            cameraHelper.notifyRemoveOutputs(mSurface);
             mLocalUser.setPreview(null);
         }
     }
@@ -162,7 +161,7 @@ public class LiveEngine implements LiveEngineHandler {
                 image.close();
             }
         });
-        cameraHelper.notifyOpenCamera();
+        cameraHelper.notifyCreateDevice();
     }
     
     public void stopLocalStream() {

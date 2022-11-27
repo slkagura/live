@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+    <data>
+        <variable
+            name="v"
+            type="xyz.slkagura.ui.view.codec.CodecActivity"
+            />
+        <variable
+            name="vm"
+            type="xyz.slkagura.ui.view.codec.CodecViewModel"
+            />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/activity_codec_cl_root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <FrameLayout
+            android:id="@+id/activity_codec_fl_camera_preview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/gray"
+            app:layout_constraintBottom_toTopOf="@id/activity_codec_fl_codec_preview"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+        <FrameLayout
+            android:id="@+id/activity_codec_fl_codec_preview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/status_bar_color"
+            app:layout_constraintBottom_toTopOf="@id/activity_codec_btn_open"
+            app:layout_constraintTop_toBottomOf="@id/activity_codec_fl_camera_preview"
+            />
+        <Button
+            android:id="@+id/activity_codec_btn_open"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            android:onClick="@{() -> v.onOpenClick()}"
+            android:text="Open"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+        <Button
+            android:id="@+id/activity_codec_btn_codec"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="8dp"
+            android:onClick="@{() -> v.onCodecClick()}"
+            android:text="Codec"
+            app:layout_constraintBottom_toBottomOf="@id/activity_codec_btn_open"
+            app:layout_constraintStart_toEndOf="@id/activity_codec_btn_open"
+            app:layout_constraintTop_toTopOf="@id/activity_codec_btn_open"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

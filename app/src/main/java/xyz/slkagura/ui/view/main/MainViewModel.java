@@ -10,8 +10,4 @@ public class MainViewModel extends BaseBindingViewModel {
     protected BaseRepository initDataSource(Context context) {
         return null;
     }
-    
-    public interface Handler {
-        void onStartClick();
-    }
 }
