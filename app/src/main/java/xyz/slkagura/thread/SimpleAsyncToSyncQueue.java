@@ -57,6 +57,8 @@ public class SimpleAsyncToSyncQueue {
     
     public static void test() {
         SimpleAsyncToSyncQueue consumer = new SimpleAsyncToSyncQueue();
+        consumer.setAuto(true);
+        consumer.start();
         for (int i = 0; i < 100; i++) {
             final int id = i;
             boolean isSync = Math.random() < 0.9D;
