@@ -14,8 +14,37 @@ public class SimpleAsyncToSyncQueue {
     
     private final Thread mThread = new Thread(this::run);
     
-    public SimpleAsyncToSyncQueue() {
-        mThread.start();
+    private boolean mIsAuto = false;
+    
+    public void start() {
+        if (!mThread.isAlive()) {
+            mThread.start();
+        }
+    }
+    
+    public void stop() {
+        if (mThread.isAlive() && !mThread.isInterrupted()) {
+            mThread.interrupt();
+        }
+    }
+    
+    public void setAuto(boolean isAuto) {
+        mIsAuto = isAuto;
+    }
+    
+    private void run() {
+        try {
+            if (mIsAuto) {
+                mQueue.take().run();
+            }
+            while (!mThread.isInterrupted()) {
+                LockSupport.park();
+                Runnable runnable = mQueue.take();
+                runnable.run();
+            }
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
     
     public void offer(@NonNull Runnable runnable) {
@@ -24,19 +53,6 @@ public class SimpleAsyncToSyncQueue {
     
     public void unlock() {
         LockSupport.unpark(mThread);
-    }
-    
-    private void run() {
-        try {
-            mQueue.take().run();
-            for (; ; ) {
-                LockSupport.park();
-                Runnable runnable = mQueue.take();
-                runnable.run();
-            }
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
     
     public static void test() {
