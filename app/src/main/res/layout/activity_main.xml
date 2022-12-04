@@ -40,5 +40,17 @@
             app:layout_constraintStart_toEndOf="@id/activity_main_btn_camera"
             app:layout_constraintTop_toTopOf="@id/activity_main_btn_camera"
             />
+        <Button
+            android:id="@+id/activity_main_btn_permission"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="8dp"
+            android:onClick="@{() -> v.onPermissionClick()}"
+            android:text="Permission"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="@id/activity_main_btn_camera"
+            app:layout_constraintStart_toEndOf="@id/activity_main_btn_codec"
+            app:layout_constraintTop_toTopOf="@id/activity_main_btn_camera"
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

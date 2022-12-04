@@ -29,6 +29,12 @@ public class CameraActivity extends BaseBindingActivity<CameraViewModel, Activit
     }
     
     @Override
+    protected void initViewBinding() {
+        mBinding.setV(this);
+        mBinding.setVm(mViewModel);
+    }
+    
+    @Override
     protected void onResume() {
         super.onResume();
         onOpenClick();

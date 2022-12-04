@@ -44,5 +44,5 @@ public abstract class BaseBindingActivity<VM extends BaseBindingViewModel, B ext
     @NonNull
     protected abstract VM initDataBinding();
     
-    protected void initViewBinding() {}
+    protected abstract void initViewBinding();
 }

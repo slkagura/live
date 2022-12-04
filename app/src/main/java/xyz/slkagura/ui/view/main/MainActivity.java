@@ -12,6 +12,7 @@ import xyz.slkagura.ui.databinding.ActivityMainBinding;
 import xyz.slkagura.ui.view.camera.CameraActivity;
 import xyz.slkagura.ui.view.codec.CodecActivity;
 import xyz.slkagura.ui.view.live.LiveFragment;
+import xyz.slkagura.ui.view.permission.PermissionActivity;
 
 public class MainActivity extends BaseBindingActivity<MainViewModel, ActivityMainBinding> {
     private static final String MAIN_ACTIVITY_TAG = MainActivity.class.getSimpleName();
@@ -45,6 +46,11 @@ public class MainActivity extends BaseBindingActivity<MainViewModel, ActivityMai
     
     public void onCodecClick() {
         Intent intent = new Intent(this, CodecActivity.class);
+        startActivity(intent);
+    }
+    
+    public void onPermissionClick() {
+        Intent intent = new Intent(this, PermissionActivity.class);
         startActivity(intent);
     }
     

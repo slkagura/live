@@ -1,5 +1,8 @@
 package xyz.slkagura.thread;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import androidx.annotation.NonNull;
 
 import java.util.concurrent.LinkedBlockingQueue;
@@ -13,6 +16,8 @@ public class SimpleAsyncToSyncQueue {
     private final LinkedBlockingQueue<Runnable> mQueue = new LinkedBlockingQueue<>();
     
     private final Thread mThread = new Thread(this::run);
+    
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
     
     private boolean mIsAuto = false;
     
@@ -47,8 +52,18 @@ public class SimpleAsyncToSyncQueue {
         }
     }
     
+    public void offer(@NonNull Runnable runnable, boolean isMain) {
+        if (isMain) {
+            mQueue.offer(() -> {
+                mHandler.post(runnable);
+            });
+        } else {
+            mQueue.offer(runnable);
+        }
+    }
+    
     public void offer(@NonNull Runnable runnable) {
-        mQueue.offer(runnable);
+        offer(runnable, false);
     }
     
     public void unlock() {

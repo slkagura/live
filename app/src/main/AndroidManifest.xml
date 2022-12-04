@@ -19,7 +19,7 @@
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".App"
+        android:name=".LiveApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -46,6 +46,14 @@
             />
         <activity
             android:name=".view.codec.CodecActivity"
+            android:exported="false"
+            />
+        <activity
+            android:name=".view.permission.PermissionActivity"
+            android:exported="false"
+            />
+        <activity
+            android:name="xyz.slkagura.permission.PermissionProxyActivity"
             android:exported="false"
             />
     </application>
