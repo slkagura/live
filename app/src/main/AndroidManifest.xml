@@ -54,6 +54,7 @@
             />
         <activity
             android:name="xyz.slkagura.permission.PermissionProxyActivity"
+            android:theme="@style/Theme.Transparent"
             android:exported="false"
             />
     </application>

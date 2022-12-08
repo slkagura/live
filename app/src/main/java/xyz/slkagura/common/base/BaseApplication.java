@@ -1,11 +1,10 @@
 package xyz.slkagura.common.base;
 
 import android.app.Application;
-import android.content.Context;
 
 import xyz.slkagura.common.utils.ContextUtil;
 import xyz.slkagura.common.utils.SizeUtil;
-import xyz.slkagura.permission.PermissionManager;
+import xyz.slkagura.permission.PermissionUtil;
 
 public class BaseApplication extends Application {
     @Override
@@ -13,6 +12,6 @@ public class BaseApplication extends Application {
         super.onCreate();
         ContextUtil.init(this);
         SizeUtil.init(this);
-        PermissionManager.init(this);
+        PermissionUtil.init(this);
     }
 }
