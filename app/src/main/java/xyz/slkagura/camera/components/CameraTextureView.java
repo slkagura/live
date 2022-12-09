@@ -9,7 +9,7 @@ import android.view.TextureView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import xyz.slkagura.common.utils.LogUtil;
+import xyz.slkagura.common.utils.Log;
 
 public class CameraTextureView extends TextureView implements TextureView.SurfaceTextureListener {
     private int mRatioWidth = 0;
@@ -39,7 +39,7 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
     
     public void setAspectRatio(int width, int height) {
         if (width < 0 || height < 0) {
-            LogUtil.e("CameraTextureView", "Size cannot be negative.");
+            Log.e("CameraTextureView", "Size cannot be negative.");
             return;
         }
         mRatioWidth = width;

@@ -1,10 +1,8 @@
 package xyz.slkagura.common.utils;
 
-import android.util.Log;
-
 import xyz.slkagura.common.Level;
 
-public class LogUtil {
+public class Log {
     private static final boolean LOG_ENABLE = true;
     
     @Level
@@ -38,19 +36,19 @@ public class LogUtil {
         if (messages.length > 1) {
             message = build(messages);
         } else {
-            message = (String) messages[0];
+            message = String.valueOf(messages[0]);
         }
         if (message != null && message.length() > 0) {
             if (level == Level.Verbose) {
-                Log.v(tag, message);
+                android.util.Log.v(tag, message);
             } else if (level == Level.Debug) {
-                Log.d(tag, message);
+                android.util.Log.d(tag, message);
             } else if (level == Level.Info) {
-                Log.i(tag, message);
+                android.util.Log.i(tag, message);
             } else if (level == Level.Warn) {
-                Log.w(tag, message);
+                android.util.Log.w(tag, message);
             } else if (level == Level.Error) {
-                Log.e(tag, message);
+                android.util.Log.e(tag, message);
             }
         }
     }

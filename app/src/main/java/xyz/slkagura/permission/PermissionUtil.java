@@ -3,36 +3,45 @@ package xyz.slkagura.permission;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
-import android.content.Context;
 import android.content.Intent;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 
+import java.util.HashMap;
 import java.util.Map;
 
+import xyz.slkagura.common.utils.Log;
+import xyz.slkagura.permission.interfaces.BaseCallback;
+import xyz.slkagura.permission.interfaces.FullCallback;
+import xyz.slkagura.permission.interfaces.SimpleCallback;
+import xyz.slkagura.permission.interfaces.SingleCallback;
+
 public class PermissionUtil {
-    private static final String PERMISSION_MANAGER_TAG = PermissionUtil.class.getSimpleName();
-    
     public static final String PERMISSION_KEY = "xyz.slkagura.permission.Permission";
     
     public static final String CALLBACK_KEY = "xyz.slkagura.permission.Callback";
     
-    private static Application sApplication;
+    private static final String PERMISSION_MANAGER_TAG = PermissionUtil.class.getSimpleName();
     
-    private static Context sContext;
+    private static final Map<String, BaseCallback> CALLBACKS = new HashMap<>();
+    
+    private static Application sApplication;
     
     private PermissionUtil() {}
     
     public static void init(Application application) {
         sApplication = application;
-        sContext = sApplication.getApplicationContext();
     }
     
-    public static void request(Activity activity, @NonNull String[] permissions, @NonNull PermissionRequestCallback callback) {
+    public static void request(Activity activity, @NonNull String[] permissions, @NonNull BaseCallback callback) {
+        if ((sApplication == null && activity == null) || permissions.length < 1) {
+            return;
+        }
+        String hash = callback.toString();
+        CALLBACKS.put(hash, callback);
         Intent intent = new Intent();
+        intent.putExtra(CALLBACK_KEY, hash);
         intent.putExtra(PERMISSION_KEY, permissions);
-        intent.putExtra(CALLBACK_KEY, callback);
         if (activity != null) {
             intent.setClass(activity, PermissionProxyActivity.class);
             activity.startActivity(intent);
@@ -45,10 +54,31 @@ public class PermissionUtil {
     
     public static void test(Activity activity) {
         String[] permissions = { Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE };
-        request(activity, permissions, new PermissionRequestCallback() {
+        request(activity, permissions, new FullCallback() {
             @Override
-            public void onResult(@NonNull Map<String, Integer> permissions) {
+            public void onResult(@NonNull Map<String, Boolean> permissions) {
+                StringBuilder sb = new StringBuilder();
+                for (Map.Entry<String, Boolean> entry : permissions.entrySet()) {
+                    sb.append(entry.getKey()).append(":").append(entry.getValue()).append(System.lineSeparator());
+                }
+                Log.v(PERMISSION_MANAGER_TAG, sb.toString());
             }
         });
+        request(activity, permissions, new SimpleCallback() {
+            @Override
+            public void onResult(boolean granted) {
+                Log.v(PERMISSION_MANAGER_TAG, "Permission Request Result: ", granted);
+            }
+        });
+        request(activity, permissions, new SingleCallback() {
+            @Override
+            public void onGranted() {
+                Log.v(PERMISSION_MANAGER_TAG, "Permission All Granted");
+            }
+        });
+    }
+    
+    public static BaseCallback getCallback(String key, boolean remove) {
+        return remove ? CALLBACKS.get(key) : CALLBACKS.remove(key);
     }
 }

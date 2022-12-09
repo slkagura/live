@@ -11,7 +11,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 import xyz.slkagura.codec.interfaces.IMediaCodecCallback;
 import xyz.slkagura.codec.proxy.MediaCodecCallbackProxy;
-import xyz.slkagura.common.utils.LogUtil;
+import xyz.slkagura.common.utils.Log;
 
 public class AsyncCodec implements IMediaCodecCallback {
     private static final String ASYNC_CODEC_TAG = AsyncCodec.class.getSimpleName();
@@ -79,7 +79,7 @@ public class AsyncCodec implements IMediaCodecCallback {
     
     @Override
     public void onInputBufferAvailable(@NonNull MediaCodec codec, int index) {
-        LogUtil.v(ASYNC_CODEC_TAG, "onInputBufferAvailable()");
+        Log.v(ASYNC_CODEC_TAG, "onInputBufferAvailable()");
         if (mIsEncoder) {
             return;
         }
@@ -98,7 +98,7 @@ public class AsyncCodec implements IMediaCodecCallback {
     
     @Override
     public void onOutputBufferAvailable(@NonNull MediaCodec codec, int index, @NonNull MediaCodec.BufferInfo info) {
-        LogUtil.v(ASYNC_CODEC_TAG, "onOutputBufferAvailable()");
+        Log.v(ASYNC_CODEC_TAG, "onOutputBufferAvailable()");
         ByteBuffer buffer = codec.getOutputBuffer(index);
         if (buffer == null) {
             return;
@@ -117,12 +117,12 @@ public class AsyncCodec implements IMediaCodecCallback {
     
     @Override
     public void onError(@NonNull MediaCodec codec, @NonNull MediaCodec.CodecException e) {
-        LogUtil.v(ASYNC_CODEC_TAG, "onError()");
+        Log.v(ASYNC_CODEC_TAG, "onError()");
         e.printStackTrace();
     }
     
     @Override
     public void onOutputFormatChanged(@NonNull MediaCodec codec, @NonNull MediaFormat format) {
-        LogUtil.v(ASYNC_CODEC_TAG, "onOutputFormatChanged()");
+        Log.v(ASYNC_CODEC_TAG, "onOutputFormatChanged()");
     }
 }

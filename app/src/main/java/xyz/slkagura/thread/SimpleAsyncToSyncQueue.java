@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.LockSupport;
 
-import xyz.slkagura.common.utils.LogUtil;
+import xyz.slkagura.common.utils.Log;
 
 public class SimpleAsyncToSyncQueue {
     private static final String TASK_QUEUE_TAG = SimpleAsyncToSyncQueue.class.getSimpleName();
@@ -79,7 +79,7 @@ public class SimpleAsyncToSyncQueue {
             boolean isSync = Math.random() < 0.9D;
             String groupId = isSync ? "group-1" : "group-2";
             consumer.offer(() -> {
-                LogUtil.d(TASK_QUEUE_TAG, "task: ", id, " group: ", groupId, " sync: ", String.valueOf(isSync), " start: ", System.nanoTime());
+                Log.d(TASK_QUEUE_TAG, "task: ", id, " group: ", groupId, " sync: ", String.valueOf(isSync), " start: ", System.nanoTime());
                 new Thread(() -> {
                     try {
                         Thread.sleep(3000);
@@ -87,9 +87,9 @@ public class SimpleAsyncToSyncQueue {
                         throw new RuntimeException(e);
                     }
                     consumer.unlock();
-                    LogUtil.d(TASK_QUEUE_TAG, "task: ", id, " group: ", groupId, " sync: ", String.valueOf(isSync), " unlock: ", System.nanoTime());
+                    Log.d(TASK_QUEUE_TAG, "task: ", id, " group: ", groupId, " sync: ", String.valueOf(isSync), " unlock: ", System.nanoTime());
                 }).start();
-                LogUtil.d(TASK_QUEUE_TAG, "task: ", id, " group: ", groupId, " sync: ", String.valueOf(isSync), " end: ", System.nanoTime());
+                Log.d(TASK_QUEUE_TAG, "task: ", id, " group: ", groupId, " sync: ", String.valueOf(isSync), " end: ", System.nanoTime());
             });
         }
     }

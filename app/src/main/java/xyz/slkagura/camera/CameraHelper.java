@@ -30,7 +30,7 @@ import xyz.slkagura.camera.interfaces.ICameraHelperCallback;
 import xyz.slkagura.camera.proxy.CameraCaptureSessionCaptureCallbackProxy;
 import xyz.slkagura.camera.proxy.CameraCaptureSessionStateCallbackProxy;
 import xyz.slkagura.camera.proxy.CameraDeviceStateCallbackProxy;
-import xyz.slkagura.common.utils.LogUtil;
+import xyz.slkagura.common.utils.Log;
 import xyz.slkagura.thread.SimpleAsyncToSyncQueue;
 
 public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureSessionStateCallback, ICameraCaptureSessionCaptureCallback, ImageReader.OnImageAvailableListener {
@@ -91,12 +91,12 @@ public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureS
     }
     
     public void notifyStartThread() {
-        LogUtil.v(TAG, "notifyStartThread()");
+        Log.v(TAG, "notifyStartThread()");
         mQueue.offer(this::startThread);
     }
     
     private void startThread() {
-        LogUtil.v(TAG, "startThread()");
+        Log.v(TAG, "startThread()");
         if (mThread == null || mThread.isInterrupted()) {
             mThread = new HandlerThread(TAG + "Thread" + UUID.randomUUID().toString().replace("-", "").substring(0, 5));
             mThread.start();
@@ -108,12 +108,12 @@ public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureS
     }
     
     public void notifyCloseThread() {
-        LogUtil.v(TAG, "notifyCloseThread()");
+        Log.v(TAG, "notifyCloseThread()");
         mQueue.offer(this::stopThread);
     }
     
     private void stopThread() {
-        LogUtil.v(TAG, "stopThread()");
+        Log.v(TAG, "stopThread()");
         if (mThread != null) {
             mThread.quitSafely();
             try {
@@ -127,12 +127,12 @@ public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureS
     }
     
     public void notifyOpenCamera() {
-        LogUtil.v(TAG, "notifyOpenCamera()");
+        Log.v(TAG, "notifyOpenCamera()");
         mQueue.offer(this::createDevice);
     }
     
     public void notifyCloseCamera() {
-        LogUtil.v(TAG, "notifyCloseCamera()");
+        Log.v(TAG, "notifyCloseCamera()");
         mQueue.offer(() -> {
             deleteRequest();
             deleteSession();
@@ -142,13 +142,13 @@ public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureS
     }
     
     public void notifyCreateDevice() {
-        LogUtil.v(TAG, "notifyCreateDevice()");
+        Log.v(TAG, "notifyCreateDevice()");
         mQueue.offer(this::createDevice);
     }
     
     @SuppressLint("MissingPermission")
     private void createDevice() {
-        LogUtil.v(TAG, "createDevice()");
+        Log.v(TAG, "createDevice()");
         if (mHandler == null) {
             mQueue.unlock();
             return;
@@ -179,27 +179,27 @@ public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureS
     
     @Override
     public void onOpened(@NonNull CameraDevice camera) {
-        LogUtil.v(TAG, "CameraDevice.StateCallback.onOpened()");
+        Log.v(TAG, "CameraDevice.StateCallback.onOpened()");
         mDevice = camera;
         createSession();
     }
     
     @Override
     public void onDisconnected(@NonNull CameraDevice camera) {
-        LogUtil.v(TAG, "CameraDevice.StateCallback.onDisconnected()");
+        Log.v(TAG, "CameraDevice.StateCallback.onDisconnected()");
         deleteDevice();
         mQueue.unlock();
     }
     
     @Override
     public void onError(@NonNull CameraDevice camera, int error) {
-        LogUtil.v(TAG, "CameraDevice.StateCallback.onError()");
+        Log.v(TAG, "CameraDevice.StateCallback.onError()");
         deleteDevice();
         mQueue.unlock();
     }
     
     public void notifyDeleteDevice() {
-        LogUtil.v(TAG, "notifyDeleteDevice()");
+        Log.v(TAG, "notifyDeleteDevice()");
         mQueue.offer(() -> {
             deleteDevice();
             mQueue.unlock();
@@ -207,7 +207,7 @@ public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureS
     }
     
     private void deleteDevice() {
-        LogUtil.v(TAG, "deleteDevice()");
+        Log.v(TAG, "deleteDevice()");
         if (mDevice != null) {
             mDevice.close();
             mDevice = null;
@@ -215,19 +215,19 @@ public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureS
     }
     
     public void notifyCreateSession() {
-        LogUtil.v(TAG, "notifyCreateSession()");
+        Log.v(TAG, "notifyCreateSession()");
         mQueue.offer(this::createSession);
     }
     
     private void createSession() {
-        LogUtil.v(TAG, "createSession() Call Method");
+        Log.v(TAG, "createSession() Call Method");
         if (mHandler == null) {
-            LogUtil.v(TAG, "createSession() Handler Null");
+            Log.v(TAG, "createSession() Handler Null");
             mQueue.unlock();
             return;
         }
         if (mOutputs.isEmpty()) {
-            LogUtil.e(TAG, "createSession() Output Null OR Empty");
+            Log.e(TAG, "createSession() Output Null OR Empty");
             mQueue.unlock();
             return;
         }
@@ -239,25 +239,25 @@ public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureS
             deleteSession();
             mQueue.unlock();
         }
-        LogUtil.v(TAG, "createSession() Call End");
+        Log.v(TAG, "createSession() Call End");
     }
     
     @Override
     public void onConfigured(@NonNull CameraCaptureSession session) {
-        LogUtil.v(TAG, "CameraCaptureSession.StateCallback.onConfigured()");
+        Log.v(TAG, "CameraCaptureSession.StateCallback.onConfigured()");
         mSession = session;
         createRequest();
     }
     
     @Override
     public void onConfigureFailed(@NonNull CameraCaptureSession session) {
-        LogUtil.v(TAG, "CameraCaptureSession.StateCallback.onConfigureFailed()");
+        Log.v(TAG, "CameraCaptureSession.StateCallback.onConfigureFailed()");
         deleteSession();
         mQueue.unlock();
     }
     
     public void notifyDeleteSession() {
-        LogUtil.v(TAG, "notifyDeleteSession()");
+        Log.v(TAG, "notifyDeleteSession()");
         mQueue.offer(() -> {
             deleteSession();
             mQueue.unlock();
@@ -265,7 +265,7 @@ public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureS
     }
     
     private void deleteSession() {
-        LogUtil.v(TAG, "deleteSession()");
+        Log.v(TAG, "deleteSession()");
         if (mSession != null) {
             mSession.close();
             mSession = null;
@@ -273,12 +273,12 @@ public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureS
     }
     
     public void notifyCreateRequest() {
-        LogUtil.v(TAG, "notifyCreateRequest()");
+        Log.v(TAG, "notifyCreateRequest()");
         mQueue.offer(this::createRequest);
     }
     
     private void createRequest() {
-        LogUtil.v(TAG, "createRequest()");
+        Log.v(TAG, "createRequest()");
         try {
             CaptureRequest.Builder builder = mDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             if (mOutputs.isEmpty()) {
@@ -302,7 +302,7 @@ public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureS
     }
     
     public void notifyDeleteRequest() {
-        LogUtil.v(TAG, "notifyDeleteRequest()");
+        Log.v(TAG, "notifyDeleteRequest()");
         mQueue.offer(() -> {
             deleteRequest();
             mQueue.unlock();
@@ -310,7 +310,7 @@ public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureS
     }
     
     private void deleteRequest() {
-        LogUtil.v(TAG, "deleteRequest()");
+        Log.v(TAG, "deleteRequest()");
         if (mRequest != null) {
             if (mSession != null) {
                 try {
@@ -325,7 +325,7 @@ public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureS
     }
     
     public void notifyAddOutputs(Surface... surfaces) {
-        LogUtil.v(TAG, "notifyAddOutput()");
+        Log.v(TAG, "notifyAddOutput()");
         if (surfaces == null || surfaces.length < 1) {
             return;
         }
@@ -349,7 +349,7 @@ public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureS
     }
     
     public void notifyRemoveOutputs(Surface... surfaces) {
-        LogUtil.v(TAG, "notifyRemoveOutput()");
+        Log.v(TAG, "notifyRemoveOutput()");
         if (surfaces == null || surfaces.length < 1) {
             return;
         }
@@ -376,7 +376,7 @@ public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureS
     
     @Override
     public void onImageAvailable(ImageReader reader) {
-        LogUtil.v(TAG, "onImageAvailable()");
+        Log.v(TAG, "onImageAvailable()");
         Image image = reader.acquireLatestImage();
         if (image != null) {
             image.close();
