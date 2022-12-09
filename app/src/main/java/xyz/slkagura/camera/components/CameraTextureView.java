@@ -9,7 +9,7 @@ import android.view.TextureView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import xyz.slkagura.common.utils.Log;
+import xyz.slkagura.common.extension.log.Log;
 
 public class CameraTextureView extends TextureView implements TextureView.SurfaceTextureListener {
     private int mRatioWidth = 0;

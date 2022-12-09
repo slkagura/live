@@ -6,123 +6,134 @@ import android.view.Surface;
 
 import androidx.annotation.NonNull;
 
-import java.nio.ByteBuffer;
 import java.util.concurrent.ArrayBlockingQueue;
 
+import xyz.slkagura.codec.interfaces.ChangeCallback;
+import xyz.slkagura.codec.interfaces.ErrorCallback;
 import xyz.slkagura.codec.interfaces.IMediaCodecCallback;
+import xyz.slkagura.codec.interfaces.InputCallback;
+import xyz.slkagura.codec.interfaces.OutputCallback;
 import xyz.slkagura.codec.proxy.MediaCodecCallbackProxy;
-import xyz.slkagura.common.utils.Log;
+import xyz.slkagura.common.extension.log.Log;
+import xyz.slkagura.common.interfaces.PCallback;
 
 public class AsyncCodec implements IMediaCodecCallback {
     private static final String ASYNC_CODEC_TAG = AsyncCodec.class.getSimpleName();
     
-    private final MediaCodecCallbackProxy mProxy = new MediaCodecCallbackProxy(this);
+    private final ArrayBlockingQueue<byte[]> mQueue;
     
-    private MediaCodec mCodec;
+    private final PCallback<byte[]> mCallback;
     
-    private boolean mIsEncoder;
+    private final InputCallback mOnInput;
     
-    private Surface mSurface;
+    private final OutputCallback mOnOutput;
     
-    private byte[] mData;
+    private final ChangeCallback mOnChanged;
     
-    private ArrayBlockingQueue<byte[]> mQueue;
+    private final ErrorCallback mOnError;
     
-    public AsyncCodec(MediaFormat format, Surface surface, boolean isEncoder) {
-        if (format == null) {
-            return;
-        }
-        mIsEncoder = isEncoder;
+    private final MediaCodec mCodec;
+    
+    private AsyncCodec(@NonNull MediaFormat format, @NonNull ArrayBlockingQueue<byte[]> queue, PCallback<byte[]> callback, Surface surface) {
+        mQueue = queue;
+        mCallback = callback;
+        MediaCodec codec = null;
+        boolean isEncoder = true;
         try {
-            if (mIsEncoder) {
-                mCodec = MediaCodec.createEncoderByType(format.getString(MediaFormat.KEY_MIME));
-                mCodec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
-                mSurface = mCodec.createInputSurface();
-            } else {
-                if (surface == null) {
-                    return;
-                }
-                mSurface = surface;
-                mCodec = MediaCodec.createDecoderByType(format.getString(MediaFormat.KEY_MIME));
-                mCodec.configure(format, mSurface, null, 0);
+            if (surface != null) {
+                codec = MediaCodec.createDecoderByType(format.getString(MediaFormat.KEY_MIME));
+                codec.configure(format, surface, null, 0);
+                isEncoder = false;
+            } else if (mCallback != null) {
+                MediaCodec mediaCodec = MediaCodec.createEncoderByType(format.getString(MediaFormat.KEY_MIME));
+                mediaCodec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
             }
-            mCodec.setCallback(mProxy);
-            mCodec.start();
+            if (codec != null) {
+                codec.setCallback(new MediaCodecCallbackProxy(this));
+                codec.start();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        mCodec = codec;
+        if (isEncoder) {
+            mOnInput = this::onEncoderInputBufferAvailable;
+            mOnOutput = this::onEncoderOutputBufferAvailable;
+            mOnError = this::onEncoderError;
+            mOnChanged = this::onEncoderOutputFormatChanged;
+        } else {
+            mOnInput = this::onDecoderInputBufferAvailable;
+            mOnOutput = this::onDecoderOutputBufferAvailable;
+            mOnError = this::onDecoderError;
+            mOnChanged = this::onDecoderOutputFormatChanged;
+        }
+    }
+    
+    public static AsyncCodec create(@NonNull MediaFormat format, @NonNull PCallback<byte[]> callback) {
+        return new AsyncCodec(format, new ArrayBlockingQueue<>(25), callback, null);
+    }
+    
+    public static AsyncCodec create(@NonNull MediaFormat format, @NonNull Surface surface) {
+        return new AsyncCodec(format, new ArrayBlockingQueue<>(125), null, surface);
     }
     
     public void release() {
-        if (mCodec != null) {
-            mCodec.stop();
-            mCodec.release();
-            mCodec = null;
-        }
-        if (mQueue != null) {
-            mQueue.clear();
-            mQueue = null;
-        }
-    }
-    
-    public Surface getSurface() {
-        return mSurface;
-    }
-    
-    public void setData(byte[] data) {
-        mData = data;
-    }
-    
-    public void setQueue(ArrayBlockingQueue<byte[]> queue) {
-        mQueue = queue;
+        mQueue.clear();
+        mCodec.stop();
+        mCodec.release();
     }
     
     @Override
     public void onInputBufferAvailable(@NonNull MediaCodec codec, int index) {
-        Log.v(ASYNC_CODEC_TAG, "onInputBufferAvailable()");
-        if (mIsEncoder) {
-            return;
-        }
-        ByteBuffer buffer = codec.getInputBuffer(index);
-        if (buffer == null) {
-            return;
-        }
-        if (mQueue != null) {
-            mData = mQueue.poll();
-            if (mData != null) {
-                buffer.put(mData);
-            }
-        }
-        codec.queueInputBuffer(index, 0, mData != null ? mData.length : 0, System.currentTimeMillis(), MediaCodec.BUFFER_FLAG_CODEC_CONFIG);
+        mOnInput.onInputBufferAvailable(codec, index);
     }
     
     @Override
     public void onOutputBufferAvailable(@NonNull MediaCodec codec, int index, @NonNull MediaCodec.BufferInfo info) {
-        Log.v(ASYNC_CODEC_TAG, "onOutputBufferAvailable()");
-        ByteBuffer buffer = codec.getOutputBuffer(index);
-        if (buffer == null) {
-            return;
-        }
-        if (mIsEncoder) {
-            mData = new byte[buffer.remaining()];
-            buffer.get(mData);
-            if (mQueue != null) {
-                mQueue.offer(mData);
-            }
-            codec.releaseOutputBuffer(index, false);
-        } else {
-            codec.releaseOutputBuffer(index, true);
-        }
+        mOnOutput.onOutputBufferAvailable(codec, index, info);
     }
     
     @Override
     public void onError(@NonNull MediaCodec codec, @NonNull MediaCodec.CodecException e) {
-        Log.v(ASYNC_CODEC_TAG, "onError()");
-        e.printStackTrace();
+        mOnError.onError(codec, e);
     }
     
     @Override
     public void onOutputFormatChanged(@NonNull MediaCodec codec, @NonNull MediaFormat format) {
-        Log.v(ASYNC_CODEC_TAG, "onOutputFormatChanged()");
+        mOnChanged.onOutputFormatChanged(codec,format);
+    }
+    
+    private void onEncoderInputBufferAvailable(@NonNull MediaCodec codec, int index) {
+        Log.v(ASYNC_CODEC_TAG, "onEncoderInputBufferAvailable()");
+    }
+    
+    public void onEncoderOutputBufferAvailable(@NonNull MediaCodec codec, int index, @NonNull MediaCodec.BufferInfo info) {
+        Log.v(ASYNC_CODEC_TAG, "onEncoderOutputBufferAvailable()");
+    }
+    
+    private void onEncoderError(@NonNull MediaCodec codec, @NonNull MediaCodec.CodecException e) {
+        Log.v(ASYNC_CODEC_TAG, "onEncoderError()");
+        e.printStackTrace();
+    }
+    
+    private void onEncoderOutputFormatChanged(@NonNull MediaCodec codec, @NonNull MediaFormat format) {
+        Log.v(ASYNC_CODEC_TAG, "onEncoderOutputFormatChanged()");
+    }
+    
+    private void onDecoderInputBufferAvailable(@NonNull MediaCodec codec, int index) {
+        Log.v(ASYNC_CODEC_TAG, "onDecoderInputBufferAvailable()");
+    }
+    
+    public void onDecoderOutputBufferAvailable(@NonNull MediaCodec codec, int index, @NonNull MediaCodec.BufferInfo info) {
+        Log.v(ASYNC_CODEC_TAG, "onDecoderOutputBufferAvailable()");
+    }
+    
+    private void onDecoderError(@NonNull MediaCodec codec, @NonNull MediaCodec.CodecException e) {
+        Log.v(ASYNC_CODEC_TAG, "onDecoderError()");
+        e.printStackTrace();
+    }
+    
+    private void onDecoderOutputFormatChanged(@NonNull MediaCodec codec, @NonNull MediaFormat format) {
+        Log.v(ASYNC_CODEC_TAG, "onDecoderOutputFormatChanged()");
     }
 }

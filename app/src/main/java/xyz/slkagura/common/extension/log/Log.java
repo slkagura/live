@@ -1,6 +1,4 @@
-package xyz.slkagura.common.utils;
-
-import xyz.slkagura.common.Level;
+package xyz.slkagura.common.extension.log;
 
 public class Log {
     private static final boolean LOG_ENABLE = true;

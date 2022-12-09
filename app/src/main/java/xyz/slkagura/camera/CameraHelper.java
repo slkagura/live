@@ -30,7 +30,7 @@ import xyz.slkagura.camera.interfaces.ICameraHelperCallback;
 import xyz.slkagura.camera.proxy.CameraCaptureSessionCaptureCallbackProxy;
 import xyz.slkagura.camera.proxy.CameraCaptureSessionStateCallbackProxy;
 import xyz.slkagura.camera.proxy.CameraDeviceStateCallbackProxy;
-import xyz.slkagura.common.utils.Log;
+import xyz.slkagura.common.extension.log.Log;
 import xyz.slkagura.thread.SimpleAsyncToSyncQueue;
 
 public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureSessionStateCallback, ICameraCaptureSessionCaptureCallback, ImageReader.OnImageAvailableListener {

@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.LockSupport;
 
-import xyz.slkagura.common.utils.Log;
+import xyz.slkagura.common.extension.log.Log;
 
 public class SimpleAsyncToSyncQueue {
     private static final String TASK_QUEUE_TAG = SimpleAsyncToSyncQueue.class.getSimpleName();

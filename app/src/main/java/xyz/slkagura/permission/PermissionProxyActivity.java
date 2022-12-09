@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.HashMap;
 import java.util.Map;
 
-import xyz.slkagura.common.utils.Log;
+import xyz.slkagura.common.extension.log.Log;
 import xyz.slkagura.permission.interfaces.BaseCallback;
 import xyz.slkagura.permission.interfaces.FullCallback;
 import xyz.slkagura.permission.interfaces.SimpleCallback;

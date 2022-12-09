@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import java.util.HashMap;
 import java.util.Map;
 
-import xyz.slkagura.common.utils.Log;
+import xyz.slkagura.common.extension.log.Log;
 import xyz.slkagura.permission.interfaces.BaseCallback;
 import xyz.slkagura.permission.interfaces.FullCallback;
 import xyz.slkagura.permission.interfaces.SimpleCallback;
@@ -37,7 +37,7 @@ public class PermissionUtil {
         if ((sApplication == null && activity == null) || permissions.length < 1) {
             return;
         }
-        String hash = callback.toString();
+        String hash = String.valueOf(callback.hashCode());
         CALLBACKS.put(hash, callback);
         Intent intent = new Intent();
         intent.putExtra(CALLBACK_KEY, hash);

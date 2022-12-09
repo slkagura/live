@@ -1,4 +1,4 @@
-package xyz.slkagura.common;
+package xyz.slkagura.common.extension.log;
 
 import androidx.annotation.IntDef;
 
