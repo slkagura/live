@@ -1,5 +1,6 @@
 package xyz.slkagura.camera;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.ImageFormat;
@@ -31,6 +32,8 @@ import xyz.slkagura.camera.proxy.CameraCaptureSessionCaptureCallbackProxy;
 import xyz.slkagura.camera.proxy.CameraCaptureSessionStateCallbackProxy;
 import xyz.slkagura.camera.proxy.CameraDeviceStateCallbackProxy;
 import xyz.slkagura.common.extension.log.Log;
+import xyz.slkagura.permission.PermissionUtil;
+import xyz.slkagura.permission.interfaces.SingleCallback;
 import xyz.slkagura.thread.SimpleAsyncToSyncQueue;
 
 public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureSessionStateCallback, ICameraCaptureSessionCaptureCallback, ImageReader.OnImageAvailableListener {
@@ -87,32 +90,23 @@ public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureS
     
     public CameraHelper(Context context) {
         mContext = context;
-        startThread();
-    }
-    
-    public void notifyStartThread() {
-        Log.v(TAG, "notifyStartThread()");
-        mQueue.offer(this::startThread);
-    }
-    
-    private void startThread() {
-        Log.v(TAG, "startThread()");
-        if (mThread == null || mThread.isInterrupted()) {
-            mThread = new HandlerThread(TAG + "Thread" + UUID.randomUUID().toString().replace("-", "").substring(0, 5));
-            mThread.start();
-            mHandler = new Handler(mThread.getLooper());
-        }
-        if (mHandler == null) {
-            mHandler = new Handler(mThread.getLooper());
-        }
+        mThread = new HandlerThread(TAG + "Thread" + UUID.randomUUID().toString().replace("-", "").substring(0, 5));
+        mThread.start();
+        mHandler = new Handler(mThread.getLooper());
     }
     
     public void notifyCloseThread() {
         Log.v(TAG, "notifyCloseThread()");
-        mQueue.offer(this::stopThread);
+        mQueue.offer(() -> {
+            deleteRequest();
+            deleteSession();
+            deleteDevice();
+            closeThread();
+            mQueue.unlock();
+        });
     }
     
-    private void stopThread() {
+    private void closeThread() {
         Log.v(TAG, "stopThread()");
         if (mThread != null) {
             mThread.quitSafely();
@@ -124,11 +118,7 @@ public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureS
                 e.printStackTrace();
             }
         }
-    }
-    
-    public void notifyOpenCamera() {
-        Log.v(TAG, "notifyOpenCamera()");
-        mQueue.offer(this::createDevice);
+        mQueue.stop();
     }
     
     public void notifyCloseCamera() {
@@ -157,24 +147,26 @@ public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureS
             mQueue.unlock();
             return;
         }
-        CameraManager manager = mContext.getSystemService(CameraManager.class);
-        try {
-            String cameraId = "";
-            String[] cameraIdList = manager.getCameraIdList();
-            for (int i = 0; i <= cameraIdList.length; i++) {
-                CameraCharacteristics cameraCharacteristics = manager.getCameraCharacteristics(cameraIdList[i]);
-                Integer facing = cameraCharacteristics.get(CameraCharacteristics.LENS_FACING);
-                if (facing == CameraCharacteristics.LENS_FACING_FRONT) {
-                    cameraId = cameraIdList[i];
-                    break;
+        PermissionUtil.request(new String[]{ Manifest.permission.CAMERA }, (SingleCallback) () -> {
+            CameraManager manager = mContext.getSystemService(CameraManager.class);
+            try {
+                String cameraId = "";
+                String[] cameraIdList = manager.getCameraIdList();
+                for (int i = 0; i <= cameraIdList.length; i++) {
+                    CameraCharacteristics cameraCharacteristics = manager.getCameraCharacteristics(cameraIdList[i]);
+                    Integer facing = cameraCharacteristics.get(CameraCharacteristics.LENS_FACING);
+                    if (facing == CameraCharacteristics.LENS_FACING_FRONT) {
+                        cameraId = cameraIdList[i];
+                        break;
+                    }
                 }
+                manager.openCamera(cameraId, mCameraDeviceStateCallbackProxy, mHandler);
+            } catch (CameraAccessException e) {
+                e.printStackTrace();
+                deleteDevice();
+                mQueue.unlock();
             }
-            manager.openCamera(cameraId, mCameraDeviceStateCallbackProxy, mHandler);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-            deleteDevice();
-            mQueue.unlock();
-        }
+        });
     }
     
     @Override

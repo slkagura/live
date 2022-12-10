@@ -11,7 +11,6 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 import xyz.slkagura.codec.bean.Frame;
-import xyz.slkagura.codec.interfaces.IMediaCodecCallback;
 
 public class SyncCodec2 extends Thread {
     private static final String TAG = SyncCodec.class.getSimpleName();
@@ -24,8 +23,6 @@ public class SyncCodec2 extends Thread {
     
     private final Condition mCanProduce = mLock.newCondition();
     
-    private IMediaCodecCallback mCallback;
-    
     private MediaFormat mEncodeFormat;
     
     private MediaCodec mEncoder;
@@ -36,9 +33,8 @@ public class SyncCodec2 extends Thread {
     
     private Surface mSurface;
     
-    public SyncCodec2(String name, IMediaCodecCallback callback) {
+    public SyncCodec2(String name) {
         super(name);
-        mCallback = callback;
     }
     
     public void createEncoder(MediaFormat format) {
@@ -197,7 +193,6 @@ public class SyncCodec2 extends Thread {
             deleteEncoder();
             deleteDecoder();
             super.interrupt();
-            mCallback = null;
         }
     }
 }

@@ -11,7 +11,7 @@ import java.util.concurrent.locks.LockSupport;
 import xyz.slkagura.common.extension.log.Log;
 
 public class SimpleAsyncToSyncQueue {
-    private static final String TASK_QUEUE_TAG = SimpleAsyncToSyncQueue.class.getSimpleName();
+    private static final String SIMPLE_ASYNC_TO_SYNC_QUEUE_TAG = SimpleAsyncToSyncQueue.class.getSimpleName();
     
     private final LinkedBlockingQueue<Runnable> mQueue = new LinkedBlockingQueue<>();
     
@@ -19,11 +19,14 @@ public class SimpleAsyncToSyncQueue {
     
     private final Handler mHandler = new Handler(Looper.getMainLooper());
     
-    private boolean mIsAuto = false;
+    public SimpleAsyncToSyncQueue() {
+        this(true);
+    }
     
-    public void start() {
-        if (!mThread.isAlive()) {
-            mThread.start();
+    public SimpleAsyncToSyncQueue(boolean auto) {
+        mThread.start();
+        if (auto) {
+            LockSupport.unpark(mThread);
         }
     }
     
@@ -31,17 +34,11 @@ public class SimpleAsyncToSyncQueue {
         if (mThread.isAlive() && !mThread.isInterrupted()) {
             mThread.interrupt();
         }
-    }
-    
-    public void setAuto(boolean isAuto) {
-        mIsAuto = isAuto;
+        mQueue.clear();
     }
     
     private void run() {
         try {
-            if (mIsAuto) {
-                mQueue.take().run();
-            }
             while (!mThread.isInterrupted()) {
                 LockSupport.park();
                 Runnable runnable = mQueue.take();
@@ -54,9 +51,7 @@ public class SimpleAsyncToSyncQueue {
     
     public void offer(@NonNull Runnable runnable, boolean isMain) {
         if (isMain) {
-            mQueue.offer(() -> {
-                mHandler.post(runnable);
-            });
+            mQueue.offer(() -> mHandler.post(runnable));
         } else {
             mQueue.offer(runnable);
         }
@@ -71,25 +66,23 @@ public class SimpleAsyncToSyncQueue {
     }
     
     public static void test() {
-        SimpleAsyncToSyncQueue consumer = new SimpleAsyncToSyncQueue();
-        consumer.setAuto(true);
-        consumer.start();
+        SimpleAsyncToSyncQueue queue = new SimpleAsyncToSyncQueue();
         for (int i = 0; i < 100; i++) {
             final int id = i;
             boolean isSync = Math.random() < 0.9D;
             String groupId = isSync ? "group-1" : "group-2";
-            consumer.offer(() -> {
-                Log.d(TASK_QUEUE_TAG, "task: ", id, " group: ", groupId, " sync: ", String.valueOf(isSync), " start: ", System.nanoTime());
+            queue.offer(() -> {
+                Log.d(SIMPLE_ASYNC_TO_SYNC_QUEUE_TAG, "task: ", id, " group: ", groupId, " sync: ", String.valueOf(isSync), " start: ", System.nanoTime());
                 new Thread(() -> {
                     try {
                         Thread.sleep(3000);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
-                    consumer.unlock();
-                    Log.d(TASK_QUEUE_TAG, "task: ", id, " group: ", groupId, " sync: ", String.valueOf(isSync), " unlock: ", System.nanoTime());
+                    queue.unlock();
+                    Log.d(SIMPLE_ASYNC_TO_SYNC_QUEUE_TAG, "task: ", id, " group: ", groupId, " sync: ", String.valueOf(isSync), " unlock: ", System.nanoTime());
                 }).start();
-                Log.d(TASK_QUEUE_TAG, "task: ", id, " group: ", groupId, " sync: ", String.valueOf(isSync), " end: ", System.nanoTime());
+                Log.d(SIMPLE_ASYNC_TO_SYNC_QUEUE_TAG, "task: ", id, " group: ", groupId, " sync: ", String.valueOf(isSync), " end: ", System.nanoTime());
             });
         }
     }

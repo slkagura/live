@@ -79,7 +79,7 @@ public class LiveEngine implements LiveEngineHandler {
     
     private SyncCodec2 getSyncCodec2() {
         if (mSyncCodec2 == null) {
-            mSyncCodec2 = new SyncCodec2("SyncCodecThread", null);
+            mSyncCodec2 = new SyncCodec2("SyncCodecThread");
         }
         return mSyncCodec2;
     }

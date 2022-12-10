@@ -1,30 +1,31 @@
 package xyz.slkagura.ui.view.codec;
 
 import android.graphics.SurfaceTexture;
+import android.media.ImageReader;
 import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
+import android.opengl.EGL14;
+import android.opengl.EGLSurface;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 
-import java.util.concurrent.ArrayBlockingQueue;
-
 import xyz.slkagura.camera.CameraHelper;
 import xyz.slkagura.codec.AsyncCodec;
 import xyz.slkagura.common.base.BaseBindingActivity;
+import xyz.slkagura.common.utils.ContextUtil;
 import xyz.slkagura.common.utils.ViewModelUtil;
 import xyz.slkagura.ui.R;
 import xyz.slkagura.ui.databinding.ActivityCodecBinding;
 
 public class CodecActivity extends BaseBindingActivity<CodecViewModel, ActivityCodecBinding> {
-    private CameraHelper mCameraHelper;
+    private final CameraHelper mCameraHelper = new CameraHelper(ContextUtil.getApplicationContext());
     
     private Surface mCameraSurface;
     
-    private Surface mEncodeInputSurface;
-    
+    private Surface mEncoderInputSurface;
     private Surface mDecodeOutputSurface;
     
     private AsyncCodec mEncoder;
@@ -49,7 +50,6 @@ public class CodecActivity extends BaseBindingActivity<CodecViewModel, ActivityC
     }
     
     public void onOpenClick() {
-        mCameraHelper = new CameraHelper(mContext);
         TextureView textureView = new TextureView(mContext);
         textureView.setId(View.generateViewId());
         textureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
@@ -66,6 +66,8 @@ public class CodecActivity extends BaseBindingActivity<CodecViewModel, ActivityC
             
             @Override
             public boolean onSurfaceTextureDestroyed(@NonNull SurfaceTexture surface) {
+                mCameraHelper.notifyRemoveOutputs(mCameraSurface);
+                mCameraSurface = null;
                 return false;
             }
             
@@ -77,32 +79,28 @@ public class CodecActivity extends BaseBindingActivity<CodecViewModel, ActivityC
     }
     
     public void onCodecClick() {
-        int colorFormat = MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface;
-        String type = MediaFormat.MIMETYPE_VIDEO_AVC;
+        String type = MediaFormat.MIMETYPE_VIDEO_HEVC;
         MediaFormat encodeFormat = MediaFormat.createVideoFormat(type, 1920, 1080);
         encodeFormat.setInteger(MediaFormat.KEY_BIT_RATE, 500000);
         encodeFormat.setInteger(MediaFormat.KEY_FRAME_RATE, 25);
-        encodeFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, colorFormat);
+        encodeFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
         encodeFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
         MediaFormat decodeFormat = MediaFormat.createVideoFormat(type, 1920, 1080);
-        decodeFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, colorFormat);
+        decodeFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible);
         TextureView textureView = new TextureView(mContext);
         textureView.setId(View.generateViewId());
         textureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
             @Override
             public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surface, int width, int height) {
-                ArrayBlockingQueue<byte[]> queue = new ArrayBlockingQueue<>(10);
                 mDecodeOutputSurface = new Surface(surface);
-                mDecoder = new AsyncCodec(decodeFormat, mDecodeOutputSurface, false);
-                mDecoder.setQueue(queue);
-                mEncoder = new AsyncCodec(encodeFormat, null, true);
-                mEncodeInputSurface = mEncoder.getSurface();
-                mEncoder.setQueue(queue);
-                if (mCameraHelper == null) {
-                    mCameraHelper = new CameraHelper(mContext);
-                }
-                mCameraHelper.notifyAddOutputs(mEncodeInputSurface);
-                mCameraHelper.notifyCreateDevice();
+                mDecoder = AsyncCodec.create(decodeFormat, mDecodeOutputSurface);
+                mEncoder = AsyncCodec.create(encodeFormat, param -> {
+                    if (mDecoder != null) {
+                        mDecoder.offer(param);
+                    }
+                });
+                mEncoderInputSurface = mEncoder.getSurface();
+                mCameraHelper.notifyAddOutputs(mEncoderInputSurface);
             }
             
             @Override
@@ -122,15 +120,10 @@ public class CodecActivity extends BaseBindingActivity<CodecViewModel, ActivityC
     }
     
     @Override
-    protected void onResume() {
-        super.onResume();
-    }
-    
-    @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onDestroy() {
+        super.onDestroy();
         if (mCameraHelper != null) {
-            mCameraHelper.notifyCloseCamera();
+            mCameraHelper.notifyCloseThread();
         }
         if (mEncoder != null) {
             mEncoder.release();

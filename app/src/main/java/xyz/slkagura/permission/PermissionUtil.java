@@ -4,8 +4,10 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +33,18 @@ public class PermissionUtil {
     
     public static void init(Application application) {
         sApplication = application;
+    }
+    
+    public static boolean check(@NonNull String[] permissions) {
+        boolean granted = true;
+        for (String permission : permissions) {
+            granted = granted && sApplication.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
+        }
+        return granted;
+    }
+    
+    public static void request(@NonNull String[] permissions, @NonNull BaseCallback callback) {
+        request(null, permissions, callback);
     }
     
     public static void request(Activity activity, @NonNull String[] permissions, @NonNull BaseCallback callback) {

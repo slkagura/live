@@ -17,6 +17,8 @@ import xyz.slkagura.ui.R;
 import xyz.slkagura.ui.databinding.ActivityCameraBinding;
 
 public class CameraActivity extends BaseBindingActivity<CameraViewModel, ActivityCameraBinding> {
+    private Surface mSurface;
+    
     @Override
     protected int initLayoutId() {
         return R.layout.activity_camera;
@@ -34,34 +36,30 @@ public class CameraActivity extends BaseBindingActivity<CameraViewModel, Activit
         mBinding.setVm(mViewModel);
     }
     
-    @Override
-    protected void onResume() {
-        super.onResume();
-        onOpenClick();
-    }
-    
     public void onOpenClick() {
-        CameraHelper cameraHelper = new CameraHelper(mContext);
+        CameraHelper cameraHelper = mViewModel.getCameraHelper();
         TextureView textureView = new TextureView(mContext);
         textureView.setId(View.generateViewId());
         textureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
             @Override
-            public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surface, int width, int height) {
-                cameraHelper.notifyAddOutputs(new Surface(surface));
+            public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surfaceTexture, int width, int height) {
+                mSurface = new Surface(surfaceTexture);
+                cameraHelper.notifyAddOutputs(mSurface);
                 cameraHelper.notifyCreateDevice();
             }
     
             @Override
-            public void onSurfaceTextureSizeChanged(@NonNull SurfaceTexture surface, int width, int height) {
+            public void onSurfaceTextureSizeChanged(@NonNull SurfaceTexture surfaceTexture, int width, int height) {
             }
     
             @Override
-            public boolean onSurfaceTextureDestroyed(@NonNull SurfaceTexture surface) {
+            public boolean onSurfaceTextureDestroyed(@NonNull SurfaceTexture surfaceTexture) {
+                cameraHelper.notifyRemoveOutputs(mSurface);
                 return false;
             }
     
             @Override
-            public void onSurfaceTextureUpdated(@NonNull SurfaceTexture surface) {
+            public void onSurfaceTextureUpdated(@NonNull SurfaceTexture surfaceTexture) {
             }
         });
         ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_CONSTRAINT, ConstraintLayout.LayoutParams.MATCH_CONSTRAINT);
