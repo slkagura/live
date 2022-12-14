@@ -3,12 +3,12 @@ plugins {
 }
 
 android {
-    namespace 'xyz.slkagura.ui'
+    namespace 'xyz.slkagura'
     compileSdk 32
 
     defaultConfig {
         applicationId "xyz.slkagura.live"
-        minSdk 28
+        minSdk 31
         targetSdk 32
         versionCode 1
         versionName "1.0"
@@ -33,6 +33,7 @@ android {
 }
 
 dependencies {
+    implementation project(':reinforce')
     // 数据库
     api "androidx.room:room-runtime:2.4.3"
     annotationProcessor "androidx.room:room-compiler:2.4.3"

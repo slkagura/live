@@ -2,8 +2,6 @@ package xyz.slkagura.live.bean;
 
 import android.view.TextureView;
 
-import java.util.UUID;
-
 public class LiveUser {
     private String mUserId;
     

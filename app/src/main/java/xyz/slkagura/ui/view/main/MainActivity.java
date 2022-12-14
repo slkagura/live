@@ -7,8 +7,8 @@ import androidx.fragment.app.Fragment;
 
 import xyz.slkagura.common.base.BaseBindingActivity;
 import xyz.slkagura.common.utils.ViewModelUtil;
-import xyz.slkagura.ui.R;
-import xyz.slkagura.ui.databinding.ActivityMainBinding;
+import xyz.slkagura.R;
+import xyz.slkagura.databinding.ActivityMainBinding;
 import xyz.slkagura.ui.view.camera.CameraActivity;
 import xyz.slkagura.ui.view.codec.CodecActivity;
 import xyz.slkagura.ui.view.live.LiveFragment;

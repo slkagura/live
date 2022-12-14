@@ -42,15 +42,6 @@ public abstract class BaseBindingFragment<VM extends BaseBindingViewModel, B ext
         Observable.interval(1, TimeUnit.SECONDS).compose(bindToLifecycle()).subscribe();
     }
     
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mBinding = DataBindingUtil.inflate(inflater, mLayoutId, container, false);
-        mRoot = mBinding.getRoot();
-        mContext = mRoot.getContext();
-        return mRoot;
-    }
-    
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -60,6 +51,15 @@ public abstract class BaseBindingFragment<VM extends BaseBindingViewModel, B ext
         // 让 ViewModel 拥有 View 的生命周期感应
         getLifecycle().addObserver(mViewModel);
         initViewBinding();
+    }
+    
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        mBinding = DataBindingUtil.inflate(inflater, mLayoutId, container, false);
+        mRoot = mBinding.getRoot();
+        mContext = mRoot.getContext();
+        return mRoot;
     }
     
     protected abstract int initLayoutId();

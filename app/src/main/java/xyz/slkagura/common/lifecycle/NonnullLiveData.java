@@ -3,7 +3,6 @@ package xyz.slkagura.common.lifecycle;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 
 import xyz.slkagura.common.lifecycle.interfaces.NonnullObserver;
 
@@ -23,13 +22,13 @@ public class NonnullLiveData<T> extends MutableLiveData<T> {
     }
     
     @Override
-    public void postValue(@NonNull T value) {
-        super.postValue(value);
+    public void setValue(@NonNull T value) {
+        super.setValue(value);
     }
     
     @Override
-    public void setValue(@NonNull T value) {
-        super.setValue(value);
+    public void postValue(@NonNull T value) {
+        super.postValue(value);
     }
     
     public void observe(@NonNull LifecycleOwner owner, @NonNull NonnullObserver<? super T> observer) {

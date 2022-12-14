@@ -15,9 +15,7 @@ public class SimpleAsyncToSyncQueue {
     
     private final LinkedBlockingQueue<Runnable> mQueue = new LinkedBlockingQueue<>();
     
-    private final Thread mThread = new Thread(this::run);
-    
-    private final Handler mHandler = new Handler(Looper.getMainLooper());
+    private final Handler mHandler = new Handler(Looper.getMainLooper());    private final Thread mThread = new Thread(this::run);
     
     public SimpleAsyncToSyncQueue() {
         this(true);
@@ -27,6 +25,28 @@ public class SimpleAsyncToSyncQueue {
         mThread.start();
         if (auto) {
             LockSupport.unpark(mThread);
+        }
+    }
+    
+    public static void test() {
+        SimpleAsyncToSyncQueue queue = new SimpleAsyncToSyncQueue();
+        for (int i = 0; i < 100; i++) {
+            final int id = i;
+            boolean isSync = Math.random() < 0.9D;
+            String groupId = isSync ? "group-1" : "group-2";
+            queue.offer(() -> {
+                Log.d(SIMPLE_ASYNC_TO_SYNC_QUEUE_TAG, "task: ", id, " group: ", groupId, " sync: ", String.valueOf(isSync), " start: ", System.nanoTime());
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    queue.unlock();
+                    Log.d(SIMPLE_ASYNC_TO_SYNC_QUEUE_TAG, "task: ", id, " group: ", groupId, " sync: ", String.valueOf(isSync), " unlock: ", System.nanoTime());
+                }).start();
+                Log.d(SIMPLE_ASYNC_TO_SYNC_QUEUE_TAG, "task: ", id, " group: ", groupId, " sync: ", String.valueOf(isSync), " end: ", System.nanoTime());
+            });
         }
     }
     
@@ -65,25 +85,5 @@ public class SimpleAsyncToSyncQueue {
         LockSupport.unpark(mThread);
     }
     
-    public static void test() {
-        SimpleAsyncToSyncQueue queue = new SimpleAsyncToSyncQueue();
-        for (int i = 0; i < 100; i++) {
-            final int id = i;
-            boolean isSync = Math.random() < 0.9D;
-            String groupId = isSync ? "group-1" : "group-2";
-            queue.offer(() -> {
-                Log.d(SIMPLE_ASYNC_TO_SYNC_QUEUE_TAG, "task: ", id, " group: ", groupId, " sync: ", String.valueOf(isSync), " start: ", System.nanoTime());
-                new Thread(() -> {
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    queue.unlock();
-                    Log.d(SIMPLE_ASYNC_TO_SYNC_QUEUE_TAG, "task: ", id, " group: ", groupId, " sync: ", String.valueOf(isSync), " unlock: ", System.nanoTime());
-                }).start();
-                Log.d(SIMPLE_ASYNC_TO_SYNC_QUEUE_TAG, "task: ", id, " group: ", groupId, " sync: ", String.valueOf(isSync), " end: ", System.nanoTime());
-            });
-        }
-    }
+
 }

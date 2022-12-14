@@ -11,8 +11,12 @@ import androidx.annotation.IntDef;
 })
 public @interface Level {
     int Verbose = 2;
+    
     int Debug = 3;
+    
     int Info = 4;
+    
     int Warn = 5;
+    
     int Error = 6;
 }

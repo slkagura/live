@@ -11,8 +11,6 @@ import androidx.databinding.ViewDataBinding;
 
 import com.trello.rxlifecycle4.components.support.RxAppCompatActivity;
 
-import xyz.slkagura.ui.R;
-
 public abstract class BaseBindingActivity<VM extends BaseBindingViewModel, B extends ViewDataBinding> extends RxAppCompatActivity {
     protected VM mViewModel;
     

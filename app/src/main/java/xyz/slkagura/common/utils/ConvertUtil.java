@@ -103,7 +103,7 @@ public class ConvertUtil {
         int width = image.getWidth();
         int height = image.getHeight();
         // YUV420 大小总是 width * height * 3 / 2
-        byte[] result  = new byte[width * height * 3 / 2];
+        byte[] result = new byte[width * height * 3 / 2];
         // YUV_420_888
         Image.Plane[] planes = image.getPlanes();
         // Y通道，对应planes[0]

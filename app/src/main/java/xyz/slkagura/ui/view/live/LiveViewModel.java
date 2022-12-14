@@ -42,6 +42,7 @@ public class LiveViewModel extends BaseBindingViewModel {
     
     public interface IHandler {
         void onLive();
+        
         void onStopLive();
     }
 }

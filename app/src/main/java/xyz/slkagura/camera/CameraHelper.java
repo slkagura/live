@@ -53,6 +53,13 @@ public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureS
     private final Size mSize = new Size(1280, 720);
     
     /**
+     * 执行 CameraHelper 任务的队列
+     */
+    private final SimpleAsyncToSyncQueue mQueue = new SimpleAsyncToSyncQueue();
+    
+    private final List<Surface> mOutputs = new ArrayList<>();
+    
+    /**
      * 执行 Camera 的 Thread
      */
     private HandlerThread mThread;
@@ -76,13 +83,6 @@ public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureS
      * 相机请求
      */
     private CaptureRequest mRequest;
-    
-    /**
-     * 执行 CameraHelper 任务的队列
-     */
-    private final SimpleAsyncToSyncQueue mQueue = new SimpleAsyncToSyncQueue();
-    
-    private final List<Surface> mOutputs = new ArrayList<>();
     
     private ICameraHelperCallback mCallback;
     

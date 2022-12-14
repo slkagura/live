@@ -19,7 +19,7 @@
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".LiveApplication"
+        android:name="xyz.slkagura.reinforce.Starter"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -29,10 +29,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Live"
-        tools:targetApi="31"
         >
         <activity
-            android:name=".view.main.MainActivity"
+            android:name=".ui.view.main.MainActivity"
             android:exported="true"
             >
             <intent-filter>
@@ -41,21 +40,21 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.camera.CameraActivity"
+            android:name=".ui.view.camera.CameraActivity"
             android:exported="false"
             />
         <activity
-            android:name=".view.codec.CodecActivity"
+            android:name=".ui.view.codec.CodecActivity"
             android:exported="false"
             />
         <activity
-            android:name=".view.permission.PermissionActivity"
+            android:name=".ui.view.permission.PermissionActivity"
             android:exported="false"
             />
         <activity
             android:name="xyz.slkagura.permission.PermissionProxyActivity"
-            android:theme="@style/Theme.Transparent"
             android:exported="false"
+            android:theme="@style/Theme.Transparent"
             />
     </application>
 </manifest>

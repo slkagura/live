@@ -8,9 +8,9 @@ import xyz.slkagura.camera.interfaces.ICameraHelperCallback;
 import xyz.slkagura.common.base.BaseBindingFragment;
 import xyz.slkagura.common.utils.ViewModelUtil;
 import xyz.slkagura.live.tag.LiveState;
-import xyz.slkagura.ui.R;
+import xyz.slkagura.R;
 import xyz.slkagura.ui.component.StreamPanel;
-import xyz.slkagura.ui.databinding.FragmentLiveBinding;
+import xyz.slkagura.databinding.FragmentLiveBinding;
 
 public class LiveFragment extends BaseBindingFragment<LiveViewModel, FragmentLiveBinding> implements LiveViewModel.IHandler, StreamPanel.IHandler, ICameraHelperCallback {
     public static LiveFragment getInstance() {

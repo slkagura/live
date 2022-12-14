@@ -8,13 +8,11 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import org.w3c.dom.Text;
-
+import xyz.slkagura.R;
 import xyz.slkagura.camera.CameraHelper;
 import xyz.slkagura.common.base.BaseBindingActivity;
 import xyz.slkagura.common.utils.ViewModelUtil;
-import xyz.slkagura.ui.R;
-import xyz.slkagura.ui.databinding.ActivityCameraBinding;
+import xyz.slkagura.databinding.ActivityCameraBinding;
 
 public class CameraActivity extends BaseBindingActivity<CameraViewModel, ActivityCameraBinding> {
     private Surface mSurface;
@@ -47,17 +45,17 @@ public class CameraActivity extends BaseBindingActivity<CameraViewModel, Activit
                 cameraHelper.notifyAddOutputs(mSurface);
                 cameraHelper.notifyCreateDevice();
             }
-    
+            
             @Override
             public void onSurfaceTextureSizeChanged(@NonNull SurfaceTexture surfaceTexture, int width, int height) {
             }
-    
+            
             @Override
             public boolean onSurfaceTextureDestroyed(@NonNull SurfaceTexture surfaceTexture) {
                 cameraHelper.notifyRemoveOutputs(mSurface);
                 return false;
             }
-    
+            
             @Override
             public void onSurfaceTextureUpdated(@NonNull SurfaceTexture surfaceTexture) {
             }

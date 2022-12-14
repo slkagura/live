@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 
 import java.util.HashMap;
 import java.util.Map;

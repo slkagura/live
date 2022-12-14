@@ -5,8 +5,8 @@ import androidx.annotation.NonNull;
 import xyz.slkagura.common.base.BaseBindingActivity;
 import xyz.slkagura.common.utils.ViewModelUtil;
 import xyz.slkagura.permission.PermissionUtil;
-import xyz.slkagura.ui.R;
-import xyz.slkagura.ui.databinding.ActivityPermissionBinding;
+import xyz.slkagura.R;
+import xyz.slkagura.databinding.ActivityPermissionBinding;
 
 public class PermissionActivity extends BaseBindingActivity<PermissionViewModel, ActivityPermissionBinding> {
     @Override

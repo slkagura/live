@@ -1,24 +1,21 @@
 package xyz.slkagura.ui.view.codec;
 
 import android.graphics.SurfaceTexture;
-import android.media.ImageReader;
 import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
-import android.opengl.EGL14;
-import android.opengl.EGLSurface;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 
+import xyz.slkagura.R;
 import xyz.slkagura.camera.CameraHelper;
 import xyz.slkagura.codec.AsyncCodec;
 import xyz.slkagura.common.base.BaseBindingActivity;
 import xyz.slkagura.common.utils.ContextUtil;
 import xyz.slkagura.common.utils.ViewModelUtil;
-import xyz.slkagura.ui.R;
-import xyz.slkagura.ui.databinding.ActivityCodecBinding;
+import xyz.slkagura.databinding.ActivityCodecBinding;
 
 public class CodecActivity extends BaseBindingActivity<CodecViewModel, ActivityCodecBinding> {
     private final CameraHelper mCameraHelper = new CameraHelper(ContextUtil.getApplicationContext());
@@ -26,6 +23,7 @@ public class CodecActivity extends BaseBindingActivity<CodecViewModel, ActivityC
     private Surface mCameraSurface;
     
     private Surface mEncoderInputSurface;
+    
     private Surface mDecodeOutputSurface;
     
     private AsyncCodec mEncoder;

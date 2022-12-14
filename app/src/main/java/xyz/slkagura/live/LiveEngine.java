@@ -197,16 +197,16 @@ public class LiveEngine implements LiveEngineHandler {
                 syncCodec2.createDecoder(encodeFormat, new Surface(surfaceTexture));
                 syncCodec2.start();
             }
-    
+            
             @Override
             public void onSurfaceTextureSizeChanged(@NonNull SurfaceTexture surfaceTexture, int width, int height) {
             }
-    
+            
             @Override
             public boolean onSurfaceTextureDestroyed(@NonNull SurfaceTexture surfaceTexture) {
                 return false;
             }
-    
+            
             @Override
             public void onSurfaceTextureUpdated(@NonNull SurfaceTexture surfaceTexture) {
             }
