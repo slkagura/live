@@ -4,14 +4,25 @@ plugins {
 
 android {
     namespace 'xyz.slkagura'
-    compileSdk 33
+    compileSdk 32
     defaultConfig {
         minSdk 31
-        targetSdk 33
-
+        targetSdk 32
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+        externalNativeBuild {
+            cmake {
+                cppFlags ""
+            }
+        }
     }
+    externalNativeBuild {
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
+            version "3.22.1"
+        }
+    }
+    ndkVersion "25.1.8937393"
     buildTypes {
         release {
             minifyEnabled false
