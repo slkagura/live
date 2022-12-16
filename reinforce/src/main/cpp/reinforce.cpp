@@ -6,9 +6,6 @@
 #include <jni.h>
 #include <string>
 
-// Custom
-#include "reinforce.h"
-
 extern "C" JNIEXPORT jstring JNICALL
 Java_xyz_slkagura_reinforce_Starter_getThread(JNIEnv *env, jclass clazz) {
     std::string result = "android.app.ActivityThread";

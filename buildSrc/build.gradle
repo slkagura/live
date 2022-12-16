@@ -1,0 +1,16 @@
+plugins {
+    id 'java-gradle-plugin'
+}
+
+dependencies {
+    implementation gradleApi()
+}
+
+gradlePlugin {
+    plugins {
+        reinforce {
+            id = 'xyz.slkagura.reinforce'
+            implementationClass = 'ReinforcePlugin'
+        }
+    }
+}

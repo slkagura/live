@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace 'xyz.slkagura'
+    namespace 'xyz.slkagura.reinforce'
     compileSdk 32
     defaultConfig {
         minSdk 31

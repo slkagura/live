@@ -35,6 +35,10 @@ public class Starter extends Application {
     @NonNull
     private static native String getAppName();
     
+    static {
+        System.loadLibrary("reinforce");
+    }
+    
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
