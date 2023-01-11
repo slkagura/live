@@ -10,6 +10,7 @@ import xyz.slkagura.common.utils.ViewModelUtil;
 import xyz.slkagura.R;
 import xyz.slkagura.databinding.ActivityMainBinding;
 import xyz.slkagura.ui.view.camera.CameraActivity;
+import xyz.slkagura.ui.view.click.ClickActivity;
 import xyz.slkagura.ui.view.codec.CodecActivity;
 import xyz.slkagura.ui.view.live.LiveFragment;
 import xyz.slkagura.ui.view.permission.PermissionActivity;
@@ -51,6 +52,11 @@ public class MainActivity extends BaseBindingActivity<MainViewModel, ActivityMai
     
     public void onPermissionClick() {
         Intent intent = new Intent(this, PermissionActivity.class);
+        startActivity(intent);
+    }
+    
+    public void onMultiClick() {
+        Intent intent = new Intent(this, ClickActivity.class);
         startActivity(intent);
     }
     

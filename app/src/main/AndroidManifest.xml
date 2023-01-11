@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    >
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -31,6 +29,11 @@
         android:theme="@style/Theme.Live"
         >
         <activity
+            android:name="xyz.slkagura.permission.PermissionProxyActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Transparent"
+            />
+        <activity
             android:name=".ui.view.main.MainActivity"
             android:exported="true"
             >
@@ -52,9 +55,8 @@
             android:exported="false"
             />
         <activity
-            android:name="xyz.slkagura.permission.PermissionProxyActivity"
+            android:name=".ui.view.click.ClickActivity"
             android:exported="false"
-            android:theme="@style/Theme.Transparent"
             />
     </application>
 </manifest>
