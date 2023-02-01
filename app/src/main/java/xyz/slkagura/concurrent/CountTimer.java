@@ -1,4 +1,4 @@
-package xyz.slkagura.thread;
+package xyz.slkagura.concurrent;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -7,32 +7,38 @@ import java.util.concurrent.locks.LockSupport;
 
 import xyz.slkagura.common.interfaces.PCallback;
 
-public class CountdownTimer {
+public class CountTimer {
     private final Thread mThread;
     
     private final long mDelay;
     
     private final long mPeriod;
     
+    private final int mCount;
+    
     private final AtomicBoolean mIsRunning;
     
     private final AtomicBoolean mIsPause;
     
-    private final int mInitCount;
-    
     private final AtomicInteger mCountdown;
     
-    private final PCallback<CountdownTimer> mCallback;
+    private final PCallback<CountTimer> mEndCallback;
     
-    public CountdownTimer(PCallback<CountdownTimer> callback, long delay, long period, int count, TimeUnit unit) {
+    private PCallback<CountTimer> mResetCallback;
+    
+    public CountTimer(PCallback<CountTimer> callback, long delay, long period, int count, TimeUnit unit) {
         mThread = new Thread(this::run);
         mDelay = unit.toNanos(delay);
         mPeriod = unit.toNanos(period);
         mIsRunning = new AtomicBoolean(true);
         mIsPause = new AtomicBoolean(false);
-        mInitCount = count;
-        mCountdown = new AtomicInteger(mInitCount);
-        mCallback = callback;
+        mCount = count;
+        mCountdown = new AtomicInteger(mCount);
+        mEndCallback = callback;
+    }
+    
+    public void setResetCallback(PCallback<CountTimer> resetCallback) {
+        mResetCallback = resetCallback;
     }
     
     private void run() {
@@ -43,8 +49,9 @@ public class CountdownTimer {
             if (mIsPause.get()) {
                 LockSupport.park(mThread);
             }
+            LockSupport.parkNanos(mThread, mPeriod);
             if (mCountdown.decrementAndGet() <= 0) {
-                mCallback.callback(this);
+                mEndCallback.call(this);
                 LockSupport.park(mThread);
             }
         }
@@ -61,17 +68,17 @@ public class CountdownTimer {
         mIsRunning.compareAndSet(true, false);
     }
     
+    public void pause() {
+        mIsPause.compareAndSet(false, true);
+    }
+    
     public void resume() {
         if (mIsPause.get()) {
             LockSupport.unpark(mThread);
         }
     }
     
-    public void pause() {
-        mIsPause.compareAndSet(false, true);
-    }
-    
-    public void recount() {
-        mCountdown.set(mInitCount);
+    public void reset() {
+        mCountdown.set(mCount);
     }
 }

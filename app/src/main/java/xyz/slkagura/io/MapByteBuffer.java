@@ -4,6 +4,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 
+import xyz.slkagura.common.extension.log.Log;
+
 public class MapByteBuffer {
     private static void close(ByteBuffer cb) {
         if (cb == null || !cb.isDirect()) {
@@ -38,6 +40,7 @@ public class MapByteBuffer {
                 clean.invoke(theUnsafe, cb);
             }
         } catch (Exception ex) {
+            Log.e("", ex.getMessage());
         }
         cb = null;
     }

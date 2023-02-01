@@ -166,7 +166,7 @@ public class AsyncCodec {
         Log.v(ASYNC_CODEC_TAG, "onEncoderOutputBufferAvailable() frame: ", Arrays.toString(frame));
         buffer.clear();
         if (mCallback != null) {
-            mCallback.callback(frame);
+            mCallback.call(frame);
         }
         codec.releaseOutputBuffer(index, false);
         Log.v(ASYNC_CODEC_TAG, "onEncoderOutputBufferAvailable() Leave");

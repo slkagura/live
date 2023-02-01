@@ -42,7 +42,9 @@ public class ClickActivity extends BaseBindingActivity<ClickViewModel, ActivityC
                 mHits[mHits.length - 1] = SystemClock.uptimeMillis();
                 if (mHits[0] >= (SystemClock.uptimeMillis() - DURATION)) {
                     // 重新初始化数组
-                    mHits[0] = 0L;
+                    for (int i = 0; i < COUNT; i++) {
+                        mHits[i] = 0;
+                    }
                     Toast.makeText(ClickActivity.this, "触发连点事件", Toast.LENGTH_SHORT).show();
                 }
             }

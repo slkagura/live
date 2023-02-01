@@ -1,4 +1,5 @@
-import org.gradle.api.Action;
+import com.android.build.api.variant.AndroidComponentsExtension;
+
 import org.gradle.api.NonNullApi;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -32,5 +33,32 @@ public class ReinforcePlugin implements Plugin<Project> {
             clean.dependsOn(unzipTask);
         }
         System.out.println("<------------ Reinforce Plugin ------------>");
+        AndroidComponentsExtension extension = project.getExtensions().getByType(AndroidComponentsExtension.class);
+        // extension.onVariants(new VariantSelector() {
+        //     @Override
+        //     public VariantSelector all() {
+        //         return null;
+        //     }
+        //
+        //     @Override
+        //     public VariantSelector withBuildType(String s) {
+        //         return null;
+        //     }
+        //
+        //     @Override
+        //     public VariantSelector withFlavor(Pair<String, String> pair) {
+        //         return null;
+        //     }
+        //
+        //     @Override
+        //     public VariantSelector withName(Pattern pattern) {
+        //         return null;
+        //     }
+        //
+        //     @Override
+        //     public VariantSelector withName(String s) {
+        //         return null;
+        //     }
+        // });
     }
 }

@@ -5,13 +5,14 @@ import android.content.Context;
 import android.content.res.Resources;
 
 import androidx.annotation.ColorRes;
+import androidx.annotation.NonNull;
 
 public class ContextUtil {
     private static Application sApplication;
     
     private static Resources sResources;
     
-    public static void init(Application application) {
+    public static void init(@NonNull Application application) {
         sApplication = application;
         sResources = application.getResources();
     }
@@ -20,7 +21,11 @@ public class ContextUtil {
         return sResources.getColor(res, sApplication.getTheme());
     }
     
+    @NonNull
     public static Application getApplication() {
+        if (sApplication == null) {
+            throw new RuntimeException("ContextUtil Not Initialized");
+        }
         return sApplication;
     }
     

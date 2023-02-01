@@ -34,7 +34,7 @@ import xyz.slkagura.camera.proxy.CameraDeviceStateCallbackProxy;
 import xyz.slkagura.common.extension.log.Log;
 import xyz.slkagura.permission.PermissionUtil;
 import xyz.slkagura.permission.interfaces.SingleCallback;
-import xyz.slkagura.thread.SimpleAsyncToSyncQueue;
+import xyz.slkagura.concurrent.SimpleAsyncToSyncQueue;
 
 public class CameraHelper implements ICameraDeviceStateCallback, ICameraCaptureSessionStateCallback, ICameraCaptureSessionCaptureCallback, ImageReader.OnImageAvailableListener {
     private static final String TAG = CameraHelper.class.getSimpleName();

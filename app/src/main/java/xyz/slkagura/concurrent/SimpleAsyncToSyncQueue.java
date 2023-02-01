@@ -1,4 +1,4 @@
-package xyz.slkagura.thread;
+package xyz.slkagura.concurrent;
 
 import android.os.Handler;
 import android.os.Looper;
