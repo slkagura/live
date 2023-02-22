@@ -5,15 +5,20 @@ plugins {
 
 android {
     namespace 'xyz.slkagura'
-    compileSdk 32
-
+    compileSdk 33
     defaultConfig {
-        applicationId "xyz.slkagura.live"
+        applicationId 'xyz.slkagura.live'
         minSdk 31
-        targetSdk 32
+        targetSdk 33
         versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        versionName '1.0'
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        consumerProguardFiles 'consumer-rules.pro'
+        externalNativeBuild {
+            cmake {
+                cppFlags ''
+            }
+        }
     }
     buildTypes {
         release {
@@ -22,8 +27,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     dataBinding {
         enabled = true
@@ -31,30 +36,36 @@ android {
     viewBinding {
         enabled = true
     }
+    externalNativeBuild {
+        cmake {
+            path file('src/main/cpp/CMakeLists.txt')
+            version '3.22.1'
+        }
+    }
+    ndkVersion '25.2.9519653'
 }
 
 dependencies {
-    implementation project(':reinforce')
     // 数据库
-    api "androidx.room:room-runtime:2.4.3"
-    annotationProcessor "androidx.room:room-compiler:2.4.3"
+    implementation 'androidx.room:room-runtime:2.5.0'
+    annotationProcessor 'androidx.room:room-compiler:2.5.0'
     // 网络
-    api 'com.google.code.gson:gson:2.10'
-    api 'com.squareup.retrofit2:retrofit:2.9.0'
-    api 'io.reactivex.rxjava3:rxjava:3.1.5'
-    api 'io.reactivex.rxjava3:rxandroid:3.0.2'
+    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'io.reactivex.rxjava3:rxjava:3.1.6'
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.2'
     // 生命周期
-    api 'com.trello.rxlifecycle4:rxlifecycle:4.0.2'
-    api 'com.trello.rxlifecycle4:rxlifecycle-android:4.0.2'
-    api 'com.trello.rxlifecycle4:rxlifecycle-components:4.0.2'
-    api 'com.trello.rxlifecycle4:rxlifecycle-components-preference:4.0.2'
-    api 'com.trello.rxlifecycle4:rxlifecycle-android-lifecycle:4.0.2'
+    implementation 'com.trello.rxlifecycle4:rxlifecycle:4.0.2'
+    implementation 'com.trello.rxlifecycle4:rxlifecycle-android:4.0.2'
+    implementation 'com.trello.rxlifecycle4:rxlifecycle-components:4.0.2'
+    implementation 'com.trello.rxlifecycle4:rxlifecycle-components-preference:4.0.2'
+    implementation 'com.trello.rxlifecycle4:rxlifecycle-android-lifecycle:4.0.2'
     // 控件
-    implementation 'androidx.appcompat:appcompat:1.5.1'
-    implementation 'com.google.android.material:material:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     // 测试
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }

@@ -15,10 +15,10 @@ public class InstrumentationProxy extends Instrumentation {
     public static final String INSTRUMENTATION_PROXY_TAG = InstrumentationProxy.class.getSimpleName();
     
     // ActivityThread里面原始的Instrumentation对象,这里千万不能写成mInstrumentation,这样写
-    //抛出异常，已亲测试，所以这个地方就要注意了
+    // 抛出异常，已亲测试，所以这个地方就要注意了
     public Instrumentation oldInstrumentation;
     
-    //通过构造函数来传递对象
+    // 通过构造函数来传递对象
     public InstrumentationProxy(Instrumentation mInstrumentation) {
         oldInstrumentation = mInstrumentation;
     }
@@ -28,7 +28,7 @@ public class InstrumentationProxy extends Instrumentation {
         return oldInstrumentation.newActivity(cl, className, intent);
     }
     
-    //这个方法是由于原始方法里面的Instrumentation有execStartActivity方法来定的
+    // 这个方法是由于原始方法里面的Instrumentation有execStartActivity方法来定的
     @SuppressLint("DiscouragedPrivateApi")
     public ActivityResult execStartActivity(Context who, IBinder contextThread, IBinder token, Activity target, Intent intent, int requestCode, Bundle options) {
         Log.i(INSTRUMENTATION_PROXY_TAG, "<------------ Hook Method ------------>");
@@ -44,13 +44,13 @@ public class InstrumentationProxy extends Instrumentation {
         Log.i(INSTRUMENTATION_PROXY_TAG, "<------------ Hook Custom ------------>");
         Log.i(INSTRUMENTATION_PROXY_TAG, "这里可以做你在打开StartActivity方法之前的事情");
         Log.i(INSTRUMENTATION_PROXY_TAG, "<------------ Hook Custom ------------>");
-        //由于这个方法是隐藏的，所以需要反射来调用，先找到这方法
+        // 由于这个方法是隐藏的，所以需要反射来调用，先找到这方法
         try {
             Method execStartActivity = Instrumentation.class.getDeclaredMethod("execStartActivity", Context.class, IBinder.class, IBinder.class, Activity.class, Intent.class, int.class, Bundle.class);
             execStartActivity.setAccessible(true);
             return (ActivityResult) execStartActivity.invoke(oldInstrumentation, who, contextThread, token, target, intent, requestCode, options);
         } catch (Exception e) {
-            //如果你在这个类的成员变量Instrumentation的实例写错mInstrument,代码讲会执行到这里来
+            // 如果你在这个类的成员变量Instrumentation的实例写错mInstrument,代码讲会执行到这里来
             throw new RuntimeException("if Instrumentation parameters is mInstrumentation, hook will fail");
         }
     }

@@ -19,6 +19,10 @@ import java.util.ArrayList;
 public class Starter extends Application {
     private static final String STARTER_TAG = Starter.class.getSimpleName();
     
+    static {
+        System.loadLibrary("reinforce");
+    }
+    
     private Context mContextImpl;
     
     private Application mDelegateApplication;
@@ -34,10 +38,6 @@ public class Starter extends Application {
     
     @NonNull
     private static native String getAppName();
-    
-    static {
-        System.loadLibrary("reinforce");
-    }
     
     @Override
     protected void attachBaseContext(Context base) {
@@ -193,7 +193,7 @@ public class Starter extends Application {
             // 再次调用 onCreate 方法
             mDelegateApplication.onCreate();
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchMethodException |
-                 InvocationTargetException | NoSuchFieldException e) {
+            InvocationTargetException | NoSuchFieldException e) {
             // throw new RuntimeException(e);
             throw new RuntimeException("Error");
         }
@@ -222,7 +222,7 @@ public class Starter extends Application {
             // 做个标记，方便后面查看
             Log.i(STARTER_TAG, "has go in MyApplication attachContext method");
         } catch (ClassNotFoundException | NoSuchMethodException | NoSuchFieldException | InvocationTargetException |
-                 IllegalAccessException e) {
+            IllegalAccessException e) {
             // throw new RuntimeException(e);
             throw new RuntimeException("Error");
         }

@@ -1,13 +1,16 @@
 package xyz.slkagura.common.utils;
 
-import android.app.Application;
 import android.content.Context;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.os.VibratorManager;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 public class VibratorUtil {
     private static final String VIBRATOR_UTIL = VibratorUtil.class.getSimpleName();
+    
+    private static final ReentrantLock LOCK = new ReentrantLock();
     
     private static final VibrationEffect EFFECT = VibrationEffect.createOneShot(80, VibrationEffect.DEFAULT_AMPLITUDE);
     
@@ -16,19 +19,20 @@ public class VibratorUtil {
     private static Vibrator sDefaultVibrator;
     
     private static VibratorManager getManager() {
+        LOCK.lock();
         if (sManager == null) {
-            Application app = ContextUtil.getApplication();
-            if (app != null) {
-                sManager = ((VibratorManager) app.getSystemService(Context.VIBRATOR_MANAGER_SERVICE));
-            }
+            sManager = ((VibratorManager) ContextUtil.getApplication().getSystemService(Context.VIBRATOR_MANAGER_SERVICE));
         }
+        LOCK.unlock();
         return sManager;
     }
     
     private static Vibrator getVibrator() {
+        LOCK.lock();
         if (sDefaultVibrator == null) {
             sDefaultVibrator = getManager().getDefaultVibrator();
         }
+        LOCK.unlock();
         return sDefaultVibrator;
     }
     
