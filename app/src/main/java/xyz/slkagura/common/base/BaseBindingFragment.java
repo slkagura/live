@@ -10,15 +10,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
+import androidx.lifecycle.Lifecycle;
 
 import com.trello.rxlifecycle4.components.support.RxFragment;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.rxjava3.core.Observable;
 
-public abstract class BaseBindingFragment<VM extends BaseBindingViewModel, B extends ViewDataBinding> extends RxFragment {
-    protected VM mViewModel;
+public abstract class BaseBindingFragment<B extends ViewDataBinding> extends RxFragment {
+    @NonNull
+    protected final List<BaseViewModel> mViewModels = new ArrayList<>();
     
     protected B mBinding;
     
@@ -45,11 +49,18 @@ public abstract class BaseBindingFragment<VM extends BaseBindingViewModel, B ext
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mViewModel = initDataBinding();
+        initDataBinding(mViewModels);
+        // 让 ViewModel 拥有 View 的生命周期感应
+        Lifecycle lifecycle = getLifecycle();
+        if (!mViewModels.isEmpty()) {
+            for (BaseViewModel viewModel : mViewModels) {
+                if (viewModel != null) {
+                    lifecycle.addObserver(viewModel);
+                }
+            }
+        }
         // 支持 LiveData 绑定 xml，数据改变，UI 自动会更新
         mBinding.setLifecycleOwner(this);
-        // 让 ViewModel 拥有 View 的生命周期感应
-        getLifecycle().addObserver(mViewModel);
         initViewBinding();
     }
     
@@ -64,8 +75,7 @@ public abstract class BaseBindingFragment<VM extends BaseBindingViewModel, B ext
     
     protected abstract int initLayoutId();
     
-    @NonNull
-    protected abstract VM initDataBinding();
+    protected abstract void initDataBinding(List<BaseViewModel> viewModels);
     
     protected void initViewBinding() {}
 }

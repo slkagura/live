@@ -1,6 +1,6 @@
 package xyz.slkagura.ui.view.click;
 
-import xyz.slkagura.common.base.BaseBindingViewModel;
+import xyz.slkagura.common.base.BaseViewModel;
 
-public class ClickViewModel extends BaseBindingViewModel {
+public class ClickViewModel extends BaseViewModel {
 }

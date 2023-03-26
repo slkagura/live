@@ -2,31 +2,37 @@ package xyz.slkagura.ui.view.main;
 
 import android.content.Intent;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import xyz.slkagura.common.base.BaseBindingActivity;
-import xyz.slkagura.common.utils.ViewModelUtil;
+import java.util.List;
+
 import xyz.slkagura.R;
+import xyz.slkagura.common.base.BaseBindingActivity;
+import xyz.slkagura.common.base.BaseViewModel;
+import xyz.slkagura.common.utils.ViewModelUtil;
 import xyz.slkagura.databinding.ActivityMainBinding;
 import xyz.slkagura.ui.view.camera.CameraActivity;
 import xyz.slkagura.ui.view.click.ClickActivity;
 import xyz.slkagura.ui.view.codec.CodecActivity;
 import xyz.slkagura.ui.view.live.LiveFragment;
+import xyz.slkagura.ui.view.opengl.OpenGLActivity;
 import xyz.slkagura.ui.view.permission.PermissionActivity;
+import xyz.slkagura.ui.view.sensor.SensorActivity;
 
-public class MainActivity extends BaseBindingActivity<MainViewModel, ActivityMainBinding> {
-    private static final String MAIN_ACTIVITY_TAG = MainActivity.class.getSimpleName();
+public class MainActivity extends BaseBindingActivity<ActivityMainBinding> {
+    private static final String TAG = MainActivity.class.getSimpleName();
+    
+    private MainViewModel mViewModel;
     
     @Override
     protected int initLayoutId() {
         return R.layout.activity_main;
     }
     
-    @NonNull
     @Override
-    protected MainViewModel initDataBinding() {
-        return ViewModelUtil.get(this, MainViewModel.class);
+    protected void initDataBinding(List<BaseViewModel> viewModels) {
+        mViewModel = ViewModelUtil.get(this, MainViewModel.class);
+        viewModels.add(mViewModel);
     }
     
     @Override
@@ -57,6 +63,16 @@ public class MainActivity extends BaseBindingActivity<MainViewModel, ActivityMai
     
     public void onMultiClick() {
         Intent intent = new Intent(this, ClickActivity.class);
+        startActivity(intent);
+    }
+    
+    public void onSensorClick() {
+        Intent intent = new Intent(this, SensorActivity.class);
+        startActivity(intent);
+    }
+    
+    public void onOpenGLClick() {
+        Intent intent = new Intent(this, OpenGLActivity.class);
         startActivity(intent);
     }
     

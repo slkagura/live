@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    >
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
         <variable
             name="v"
@@ -13,57 +11,59 @@
             type="xyz.slkagura.ui.view.main.MainViewModel"
             />
     </data>
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/activity_main_cl_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp"
         >
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/activity_main_btn_camera"
-            android:layout_width="100dp"
+            android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
             android:onClick="@{() -> v.onCameraClick()}"
             android:text="Camera"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             />
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/activity_main_btn_codec"
-            android:layout_width="100dp"
+            android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:onClick="@{() -> v.onCodecClick()}"
             android:text="Codec"
-            app:layout_constraintBottom_toBottomOf="@id/activity_main_btn_camera"
-            app:layout_constraintStart_toEndOf="@id/activity_main_btn_camera"
-            app:layout_constraintTop_toTopOf="@id/activity_main_btn_camera"
             />
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/activity_main_btn_permission"
-            android:layout_width="100dp"
+            android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:onClick="@{() -> v.onPermissionClick()}"
             android:text="Permission"
-            android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="@id/activity_main_btn_camera"
-            app:layout_constraintStart_toEndOf="@id/activity_main_btn_codec"
-            app:layout_constraintTop_toTopOf="@id/activity_main_btn_camera"
             />
-        <!-- 第二行 -->
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/activity_main_btn_multi"
-            android:layout_width="100dp"
+            android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="8dp"
             android:onClick="@{() -> v.onMultiClick()}"
             android:text="Multi"
-            android:textSize="14sp"
-            app:layout_constraintTop_toBottomOf="@id/activity_main_btn_camera"
-            app:layout_constraintStart_toStartOf="@id/activity_main_btn_camera"
-            app:layout_constraintEnd_toEndOf="@id/activity_main_btn_camera"
             />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/activity_main_btn_sensor"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="8dp"
+            android:onClick="@{() -> v.onSensorClick()}"
+            android:text="Sensor"
+            />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/activity_main_btn_opengl"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="8dp"
+            android:onClick="@{() -> v.onOpenGLClick()}"
+            android:text="OpenGL"
+            />
+    </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>

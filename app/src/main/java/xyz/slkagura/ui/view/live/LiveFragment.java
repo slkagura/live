@@ -2,17 +2,20 @@ package xyz.slkagura.ui.view.live;
 
 import android.view.TextureView;
 
-import androidx.annotation.NonNull;
+import java.util.List;
 
+import xyz.slkagura.R;
 import xyz.slkagura.camera.interfaces.ICameraHelperCallback;
 import xyz.slkagura.common.base.BaseBindingFragment;
+import xyz.slkagura.common.base.BaseViewModel;
 import xyz.slkagura.common.utils.ViewModelUtil;
-import xyz.slkagura.live.tag.LiveState;
-import xyz.slkagura.R;
-import xyz.slkagura.ui.component.StreamPanel;
 import xyz.slkagura.databinding.FragmentLiveBinding;
+import xyz.slkagura.live.tag.LiveState;
+import xyz.slkagura.ui.component.StreamPanel;
 
-public class LiveFragment extends BaseBindingFragment<LiveViewModel, FragmentLiveBinding> implements LiveViewModel.IHandler, StreamPanel.IHandler, ICameraHelperCallback {
+public class LiveFragment extends BaseBindingFragment<FragmentLiveBinding> implements LiveViewModel.IHandler, StreamPanel.IHandler, ICameraHelperCallback {
+    private LiveViewModel mViewModel;
+    
     public static LiveFragment getInstance() {
         return new LiveFragment();
     }
@@ -22,10 +25,10 @@ public class LiveFragment extends BaseBindingFragment<LiveViewModel, FragmentLiv
         return R.layout.fragment_live;
     }
     
-    @NonNull
     @Override
-    protected LiveViewModel initDataBinding() {
-        return ViewModelUtil.get(this, LiveViewModel.class);
+    protected void initDataBinding(List<BaseViewModel> viewModels) {
+        mViewModel = ViewModelUtil.get(this, LiveViewModel.class);
+        viewModels.add(mViewModel);
     }
     
     @Override

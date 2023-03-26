@@ -8,24 +8,29 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import java.util.List;
+
 import xyz.slkagura.R;
 import xyz.slkagura.camera.CameraHelper;
 import xyz.slkagura.common.base.BaseBindingActivity;
+import xyz.slkagura.common.base.BaseViewModel;
 import xyz.slkagura.common.utils.ViewModelUtil;
 import xyz.slkagura.databinding.ActivityCameraBinding;
 
-public class CameraActivity extends BaseBindingActivity<CameraViewModel, ActivityCameraBinding> {
+public class CameraActivity extends BaseBindingActivity<ActivityCameraBinding> {
     private Surface mSurface;
+    
+    private CameraViewModel mViewModel;
     
     @Override
     protected int initLayoutId() {
         return R.layout.activity_camera;
     }
     
-    @NonNull
     @Override
-    protected CameraViewModel initDataBinding() {
-        return ViewModelUtil.get(this, CameraViewModel.class);
+    protected void initDataBinding(List<BaseViewModel> viewModels) {
+        mViewModel = ViewModelUtil.get(this, CameraViewModel.class);
+        viewModels.add(mViewModel);
     }
     
     @Override

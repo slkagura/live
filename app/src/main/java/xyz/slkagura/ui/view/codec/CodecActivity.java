@@ -9,16 +9,21 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
+import java.util.List;
+
 import xyz.slkagura.R;
 import xyz.slkagura.camera.CameraHelper;
 import xyz.slkagura.codec.AsyncCodec;
 import xyz.slkagura.common.base.BaseBindingActivity;
+import xyz.slkagura.common.base.BaseViewModel;
 import xyz.slkagura.common.utils.ContextUtil;
 import xyz.slkagura.common.utils.ViewModelUtil;
 import xyz.slkagura.databinding.ActivityCodecBinding;
 
-public class CodecActivity extends BaseBindingActivity<CodecViewModel, ActivityCodecBinding> {
+public class CodecActivity extends BaseBindingActivity<ActivityCodecBinding> {
     private final CameraHelper mCameraHelper = new CameraHelper(ContextUtil.getApplicationContext());
+    
+    private CodecViewModel mViewModel;
     
     private Surface mCameraSurface;
     
@@ -35,10 +40,10 @@ public class CodecActivity extends BaseBindingActivity<CodecViewModel, ActivityC
         return R.layout.activity_codec;
     }
     
-    @NonNull
     @Override
-    protected CodecViewModel initDataBinding() {
-        return ViewModelUtil.get(this, CodecViewModel.class);
+    protected void initDataBinding(List<BaseViewModel> viewModels) {
+        mViewModel = ViewModelUtil.get(this, CodecViewModel.class);
+        viewModels.add(mViewModel);
     }
     
     @Override

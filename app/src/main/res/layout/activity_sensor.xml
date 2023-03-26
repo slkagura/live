@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="v"
+            type="xyz.slkagura.ui.view.sensor.SensorActivity"
+            />
+        <variable
+            name="vm"
+            type="xyz.slkagura.ui.view.sensor.SensorViewModel"
+            />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <SurfaceView
+            android:id="@+id/act_sensor_surface_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

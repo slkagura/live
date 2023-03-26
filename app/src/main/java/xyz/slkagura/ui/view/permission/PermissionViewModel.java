@@ -1,6 +1,6 @@
 package xyz.slkagura.ui.view.permission;
 
-import xyz.slkagura.common.base.BaseBindingViewModel;
+import xyz.slkagura.common.base.BaseViewModel;
 
-public class PermissionViewModel extends BaseBindingViewModel {
+public class PermissionViewModel extends BaseViewModel {
 }

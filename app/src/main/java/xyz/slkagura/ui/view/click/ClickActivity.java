@@ -4,23 +4,26 @@ import android.os.SystemClock;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
+import java.util.List;
 
 import xyz.slkagura.R;
 import xyz.slkagura.common.base.BaseBindingActivity;
+import xyz.slkagura.common.base.BaseViewModel;
 import xyz.slkagura.common.utils.ViewModelUtil;
 import xyz.slkagura.databinding.ActivityClickBinding;
 
-public class ClickActivity extends BaseBindingActivity<ClickViewModel, ActivityClickBinding> {
+public class ClickActivity extends BaseBindingActivity<ActivityClickBinding> {
+    private ClickViewModel mViewModel;
+    
     @Override
     protected int initLayoutId() {
         return R.layout.activity_click;
     }
     
-    @NonNull
     @Override
-    protected ClickViewModel initDataBinding() {
-        return ViewModelUtil.get(this, ClickViewModel.class);
+    protected void initDataBinding(List<BaseViewModel> viewModels) {
+        mViewModel = ViewModelUtil.get(this, ClickViewModel.class);
+        viewModels.add(mViewModel);
     }
     
     @Override
