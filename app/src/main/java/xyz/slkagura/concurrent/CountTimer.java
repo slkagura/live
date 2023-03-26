@@ -1,11 +1,13 @@
 package xyz.slkagura.concurrent;
 
+import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.LockSupport;
-
-import xyz.slkagura.common.interfaces.PCallback;
 
 public class CountTimer {
     private final Thread mThread;
@@ -14,47 +16,52 @@ public class CountTimer {
     
     private final long mPeriod;
     
-    private final int mCount;
+    private final int mInitCount;
     
-    private final AtomicBoolean mIsRunning;
+    private final AtomicInteger mState;
     
-    private final AtomicBoolean mIsPause;
+    private final AtomicInteger mCurrentCount;
     
-    private final AtomicInteger mCountdown;
+    private final Listener mListener;
     
-    private final PCallback<CountTimer> mEndCallback;
-    
-    private PCallback<CountTimer> mResetCallback;
-    
-    public CountTimer(PCallback<CountTimer> callback, long delay, long period, int count, TimeUnit unit) {
-        mThread = new Thread(this::run);
+    public CountTimer(Listener listener, long delay, long period, int count, TimeUnit unit) {
+        mListener = listener;
+        mInitCount = count;
         mDelay = unit.toNanos(delay);
         mPeriod = unit.toNanos(period);
-        mIsRunning = new AtomicBoolean(true);
-        mIsPause = new AtomicBoolean(false);
-        mCount = count;
-        mCountdown = new AtomicInteger(mCount);
-        mEndCallback = callback;
-    }
-    
-    public void setResetCallback(PCallback<CountTimer> resetCallback) {
-        mResetCallback = resetCallback;
+        mState = new AtomicInteger(State.READY);
+        mCurrentCount = new AtomicInteger(mInitCount);
+        mThread = new Thread(this::run);
+        mListener.onReady(this);
     }
     
     private void run() {
         if (mDelay > 0) {
             LockSupport.parkNanos(mThread, mDelay);
         }
-        while (mIsRunning.get()) {
-            if (mIsPause.get()) {
-                LockSupport.park(mThread);
-            }
-            LockSupport.parkNanos(mThread, mPeriod);
-            if (mCountdown.decrementAndGet() <= 0) {
-                mEndCallback.call(this);
-                LockSupport.park(mThread);
+        mListener.onStart(this);
+        @State int state;
+        while ((state = mState.get()) != State.FINAL) {
+            switch (state) {
+                case State.RUNNING:
+                    LockSupport.parkNanos(mThread, mPeriod);
+                    mListener.onCount(this);
+                    if (mCurrentCount.decrementAndGet() == 0) {
+                        mState.set(State.DONE);
+                    }
+                    break;
+                case State.PAUSE:
+                    mListener.onPause(this);
+                    LockSupport.park(mThread);
+                    break;
+                case State.DONE:
+                    mListener.onDone(this);
+                    LockSupport.park(mThread);
+                    break;
+                default:
             }
         }
+        mListener.onFinal(this);
     }
     
     public void start() {
@@ -65,20 +72,107 @@ public class CountTimer {
     }
     
     public void stop() {
-        mIsRunning.compareAndSet(true, false);
+        mState.set(State.FINAL);
     }
     
     public void pause() {
-        mIsPause.compareAndSet(false, true);
+        mState.set(State.PAUSE);
     }
     
     public void resume() {
-        if (mIsPause.get()) {
-            LockSupport.unpark(mThread);
-        }
+        mState.set(State.RUNNING);
+        LockSupport.unpark(mThread);
     }
     
     public void reset() {
-        mCountdown.set(mCount);
+        mCurrentCount.set(mInitCount);
+    }
+    
+    public static Builder getBuilder() {
+        return new Builder();
+    }
+    
+    public interface Listener {
+        default void onReady(CountTimer timer) {}
+        
+        default void onStart(CountTimer timer) {}
+        
+        default void onCount(CountTimer timer) {}
+        
+        default void onPause(CountTimer timer) {}
+        
+        default void onDone(CountTimer timer) {}
+        
+        default void onFinal(CountTimer timer) {}
+    }
+    
+    @IntDef({
+        State.READY, State.RUNNING, State.PAUSE, State.DONE, State.FINAL
+    })
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface State {
+        int READY = 0;
+        
+        int RUNNING = 1;
+        
+        int PAUSE = 2;
+        
+        int DONE = 3;
+        
+        int FINAL = 4;
+    }
+    
+    public static class Builder {
+        private long mDelay = 0L;
+        
+        private long mPeriod = 1000L;
+        
+        private int mCount = 1;
+        
+        private TimeUnit mTimeUnit = TimeUnit.MILLISECONDS;
+        
+        private boolean mAutoStart = false;
+        
+        private Listener mListener;
+        
+        private Builder() {}
+        
+        public CountTimer build() {
+            CountTimer timer = new CountTimer(mListener, mDelay, mPeriod, mCount, mTimeUnit);
+            if (mAutoStart) {
+                timer.start();
+            }
+            return timer;
+        }
+        
+        public Builder setAutoStart(boolean autoStart) {
+            mAutoStart = autoStart;
+            return this;
+        }
+        
+        public Builder setCount(int count) {
+            mCount = count;
+            return this;
+        }
+        
+        public Builder setDelay(long delay) {
+            mDelay = delay;
+            return this;
+        }
+        
+        public Builder setListener(@NonNull Listener listener) {
+            mListener = listener;
+            return this;
+        }
+        
+        public Builder setPeriod(long period) {
+            mPeriod = period;
+            return this;
+        }
+        
+        public Builder setTimeUnit(TimeUnit timeUnit) {
+            mTimeUnit = timeUnit;
+            return this;
+        }
     }
 }
