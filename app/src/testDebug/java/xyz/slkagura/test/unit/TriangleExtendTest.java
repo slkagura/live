@@ -1,3 +1,5 @@
+package xyz.slkagura.test.unit;
+
 import androidx.annotation.NonNull;
 
 import org.junit.Test;
@@ -111,7 +113,7 @@ public class TriangleExtendTest {
         Point resetNewExtendTarget = new Point(newExtendTarget.mX + original.mX, newExtendTarget.mY + original.mY);
         Point resetNewExtendOriginal = new Point(newExtendOriginal.mX + original.mX, newExtendOriginal.mY + original.mY);
         builder.append(" -> ").append(resetNewExtendOriginal).append(resetNewExtendTarget).append(System.lineSeparator());
-        // 计算 transform extend length
+        // 计算 reset extend length
         double resetExtendLength = Math.sqrt(Math.pow(resetNewExtendOriginal.mX - resetNewExtendTarget.mX, 2) + Math.pow(resetNewExtendOriginal.mY - resetNewExtendTarget.mY, 2));
         builder.append("reset extend length: ").append(resetExtendLength).append(System.lineSeparator());
     }

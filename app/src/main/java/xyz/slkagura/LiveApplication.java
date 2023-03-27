@@ -1,4 +1,4 @@
-package xyz.slkagura.ui;
+package xyz.slkagura;
 
 import xyz.slkagura.common.base.BaseApplication;
 

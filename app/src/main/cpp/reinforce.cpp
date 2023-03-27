@@ -25,6 +25,6 @@ Java_xyz_slkagura_reinforce_Starter_getInstr(JNIEnv *env, jclass clazz) {
 }
 extern "C" JNIEXPORT jstring JNICALL
 Java_xyz_slkagura_reinforce_Starter_getAppName(JNIEnv *env, jclass clazz) {
-    std::string result = "xyz.slkagura.ui.LiveApplication";
+    std::string result = "xyz.slkagura.LiveApplication";
     return env->NewStringUTF(result.c_str());
 }
