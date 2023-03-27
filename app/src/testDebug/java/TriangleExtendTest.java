@@ -112,8 +112,8 @@ public class TriangleExtendTest {
         Point resetNewExtendOriginal = new Point(newExtendOriginal.mX + original.mX, newExtendOriginal.mY + original.mY);
         builder.append(" -> ").append(resetNewExtendOriginal).append(resetNewExtendTarget).append(System.lineSeparator());
         // 计算 transform extend length
-        double transformExtendLength = Math.sqrt(Math.pow(resetNewExtendOriginal.mX - resetNewExtendTarget.mX, 2) + Math.pow(resetNewExtendOriginal.mY - resetNewExtendTarget.mY, 2));
-        builder.append("reset extend length: ").append(extendLength).append(System.lineSeparator());
+        double resetExtendLength = Math.sqrt(Math.pow(resetNewExtendOriginal.mX - resetNewExtendTarget.mX, 2) + Math.pow(resetNewExtendOriginal.mY - resetNewExtendTarget.mY, 2));
+        builder.append("reset extend length: ").append(resetExtendLength).append(System.lineSeparator());
     }
     
     @Test
