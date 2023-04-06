@@ -65,5 +65,21 @@
             android:onClick="@{() -> v.onOpenGLClick()}"
             android:text="OpenGL"
             />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/activity_main_btn_grafika"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="8dp"
+            android:onClick="@{() -> v.onGrafikaClick()}"
+            android:text="Grafika"
+            />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/activity_main_btn_grafika_rebuild"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="8dp"
+            android:onClick="@{() -> v.onGrafikaRebuildClick()}"
+            android:text="Grafika (Rebuild)"
+            />
     </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>

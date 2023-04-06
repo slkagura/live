@@ -12,36 +12,55 @@ import java.util.Arrays;
 import xyz.slkagura.common.extension.log.Log;
 
 public class PathUtil {
-    private static final String PATH_UTIL = PathUtil.class.getSimpleName();
+    private static final String TAG = PathUtil.class.getSimpleName();
     
     private static final File FILES = ContextUtil.getApplication().getFilesDir();
     
+    private static final File EXTERNAL_FILES = ContextUtil.getApplication().getExternalFilesDir(null);
+    
     private static final File CACHE = ContextUtil.getApplication().getCacheDir();
+    
+    private static final File EXTERNAL_CACHE = ContextUtil.getApplication().getExternalCacheDir();
     
     private static final File STORAGE = Environment.getStorageDirectory();
     
-    private static final File STORAGE_EXTERNAL = Environment.getExternalStorageDirectory();
+    private static final File EXTERNAL_STORAGE = Environment.getExternalStorageDirectory();
     
     public static String getCanonical(File file) {
         String result = file.getAbsolutePath();
         try {
             result = file.getCanonicalPath();
         } catch (IOException e) {
-            Log.e(PATH_UTIL, e.getMessage());
+            Log.e(TAG, e.getMessage());
         }
         return result;
     }
     
     public static String getExternalCanonical() {
-        return getCanonical(STORAGE_EXTERNAL);
+        return getCanonical(EXTERNAL_STORAGE);
     }
     
-    public static String getStorageCanonical() {
-        return getCanonical(STORAGE);
+    public static String getExternalFilesCanonical() {
+        return getCanonical(EXTERNAL_FILES);
+    }
+    
+    @NonNull
+    public static String getExternalFilesPath(@Nullable String... paths) {
+        return getPath(getExternalFilesCanonical(), true, paths);
+    }
+    
+    @NonNull
+    public static String getExternalStoragePath(@Nullable String... paths) {
+        return getPath(getExternalCanonical(), true, paths);
     }
     
     public static String getFilesCanonical() {
         return getCanonical(FILES);
+    }
+    
+    @NonNull
+    public static String getFilesPath(@Nullable String... paths) {
+        return getPath(getFilesCanonical(), true, paths);
     }
     
     /**
@@ -57,7 +76,7 @@ public class PathUtil {
         if (paths == null || paths.length < 1) {
             return "";
         }
-        Log.d(PATH_UTIL, "getPath() Param", System.lineSeparator(), "prefix: ", prefix, System.lineSeparator(), "separate: ", separate, System.lineSeparator(), "paths: ", Arrays.toString(paths));
+        Log.d(TAG, "getPath() Param", System.lineSeparator(), "prefix: ", prefix, System.lineSeparator(), "separate: ", separate, System.lineSeparator(), "paths: ", Arrays.toString(paths));
         StringBuilder builder = new StringBuilder();
         builder.append(prefix);
         if (separate) {
@@ -71,22 +90,16 @@ public class PathUtil {
             }
         }
         String result = builder.toString();
-        Log.d(PATH_UTIL, "getPath() result: ", result);
+        Log.d(TAG, "getPath() result: ", result);
         return result;
     }
     
-    @NonNull
-    public static String getExternalStoragePath(@Nullable String... paths) {
-        return getPath(getExternalCanonical(), true, paths);
+    public static String getStorageCanonical() {
+        return getCanonical(STORAGE);
     }
     
     @NonNull
     public static String getStoragePath(@Nullable String... paths) {
         return getPath(getStorageCanonical(), true, paths);
-    }
-    
-    @NonNull
-    public static String getFilesPath(@Nullable String... paths) {
-        return getPath(getFilesCanonical(), true, paths);
     }
 }

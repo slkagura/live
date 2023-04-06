@@ -58,32 +58,6 @@ public class LiveEngine implements LiveEngineHandler {
         return engine;
     }
     
-    public MutableLiveData<Integer> getLiveStatus() {
-        return mLiveStatus;
-    }
-    
-    private CameraHelper getCameraHelper() {
-        if (mCameraHelper == null) {
-            Context context = ContextUtil.getApplicationContext();
-            mCameraHelper = new CameraHelper(context);
-        }
-        return mCameraHelper;
-    }
-    
-    private SyncCodec getSyncCodec() {
-        if (mSyncCodec == null) {
-            mSyncCodec = new SyncCodec("SyncCodecThread");
-        }
-        return mSyncCodec;
-    }
-    
-    private SyncCodec2 getSyncCodec2() {
-        if (mSyncCodec2 == null) {
-            mSyncCodec2 = new SyncCodec2("SyncCodecThread");
-        }
-        return mSyncCodec2;
-    }
-    
     public boolean isInRoom() {
         return mLocalUser.getRoomId() != null && !mLocalUser.getRoomId().isEmpty();
     }
@@ -156,7 +130,9 @@ public class LiveEngine implements LiveEngineHandler {
             if (image != null) {
                 byte[] mImageData = ConvertUtil.toByteArray(image);
                 if (mSyncCodec2 != null) {
-                    mSyncCodec2.queueData(new Frame(mImageData));
+                    Frame frame = new Frame();
+                    frame.mData = mImageData;
+                    mSyncCodec2.queueData(frame);
                 }
                 image.close();
             }
@@ -247,5 +223,31 @@ public class LiveEngine implements LiveEngineHandler {
                 break;
             }
         }
+    }
+    
+    public MutableLiveData<Integer> getLiveStatus() {
+        return mLiveStatus;
+    }
+    
+    private CameraHelper getCameraHelper() {
+        if (mCameraHelper == null) {
+            Context context = ContextUtil.getApplicationContext();
+            mCameraHelper = new CameraHelper(context);
+        }
+        return mCameraHelper;
+    }
+    
+    private SyncCodec getSyncCodec() {
+        if (mSyncCodec == null) {
+            mSyncCodec = new SyncCodec("SyncCodecThread");
+        }
+        return mSyncCodec;
+    }
+    
+    private SyncCodec2 getSyncCodec2() {
+        if (mSyncCodec2 == null) {
+            mSyncCodec2 = new SyncCodec2("SyncCodecThread");
+        }
+        return mSyncCodec2;
     }
 }

@@ -135,7 +135,7 @@ public class SyncCodec2 extends Thread {
                         //     mEncoder.queueInputBuffer(index, 0, buffer.remaining(), System.nanoTime() / 1000, 0);
                         // }
                         buffer.put(frame.mData);
-                        mEncoder.queueInputBuffer(index, 0, frame.mLength, frame.mPTS, 0);
+                        mEncoder.queueInputBuffer(index, 0, frame.mData.length, frame.mPTS, 0);
                     }
                     state = 1;
                     continue;

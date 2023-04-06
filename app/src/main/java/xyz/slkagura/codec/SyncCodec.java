@@ -7,7 +7,6 @@ import android.view.Surface;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.locks.ReentrantLock;
 
 import xyz.slkagura.codec.bean.Frame;
 
@@ -19,10 +18,6 @@ public class SyncCodec extends Thread {
     private final ArrayBlockingQueue<Frame> mEncodeQueue = new ArrayBlockingQueue<>(10);
     
     private final ArrayBlockingQueue<Frame> mDecodeQueue = new ArrayBlockingQueue<>(10);
-    
-    private final ReentrantLock mEncodeLock = new ReentrantLock();
-    
-    private final ReentrantLock mDecodeLock = new ReentrantLock();
     
     private MediaFormat mEncodeFormat;
     
@@ -203,7 +198,7 @@ public class SyncCodec extends Thread {
             if (buffer != null) {
                 buffer.clear();
                 buffer.put(frame.mData);
-                mDecoder.queueInputBuffer(index, 0, frame.mLength, frame.mPTS, 0);
+                mDecoder.queueInputBuffer(index, 0, frame.mData.length, frame.mPTS, 0);
                 return true;
             }
         }
@@ -225,7 +220,8 @@ public class SyncCodec extends Thread {
                     byte[] data = new byte[mBufferInfo.size];
                     buffer.get(data);
                     mEncoder.releaseOutputBuffer(index, false);
-                    Frame frame = new Frame(data);
+                    Frame frame = new Frame();
+                    frame.mData = data;
                     mDecodeQueue.offer(frame);
                     return true;
                 }
@@ -249,7 +245,7 @@ public class SyncCodec extends Thread {
             ByteBuffer buffer = mEncoder.getInputBuffer(index);
             buffer.clear();
             buffer.put(frame.mData);
-            mEncoder.queueInputBuffer(index, 0, frame.mLength, frame.mPTS, MediaCodec.BUFFER_FLAG_CODEC_CONFIG);
+            mEncoder.queueInputBuffer(index, 0, frame.mData.length, frame.mPTS, MediaCodec.BUFFER_FLAG_CODEC_CONFIG);
             return true;
         }
         return false;
