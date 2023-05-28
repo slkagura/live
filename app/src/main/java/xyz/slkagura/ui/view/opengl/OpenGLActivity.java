@@ -2,6 +2,8 @@ package xyz.slkagura.ui.view.opengl;
 
 import android.opengl.GLSurfaceView;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 
 import xyz.slkagura.R;
@@ -24,9 +26,9 @@ public class OpenGLActivity extends BaseBindingActivity<ActivityOpenglBinding> {
     }
     
     @Override
-    protected void initDataBinding(List<BaseViewModel> viewModels) {
+    protected void initDataBinding(@NonNull List<BaseViewModel> list) {
         mViewModel = ViewModelUtil.get(this, OpenGLViewModel.class);
-        viewModels.add(mViewModel);
+        list.add(mViewModel);
     }
     
     @Override

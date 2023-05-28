@@ -17,13 +17,13 @@ public class ToastUtil {
     
     private static WeakReference<Toast> sLast;
     
-    public static void show(@NonNull String text, boolean length) {
+    public static void show(@NonNull String text, boolean isShort) {
         if (text.isEmpty()) {
             return;
         }
         LOCK.lock();
         cancel();
-        Toast last = Toast.makeText(ContextUtil.getApplication(), text, length ? Toast.LENGTH_SHORT : Toast.LENGTH_LONG);
+        Toast last = Toast.makeText(ContextUtil.getApplication(), text, isShort ? Toast.LENGTH_SHORT : Toast.LENGTH_LONG);
         sLast = new WeakReference<>(last);
         last.show();
         LOCK.unlock();

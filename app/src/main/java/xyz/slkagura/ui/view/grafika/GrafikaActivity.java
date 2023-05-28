@@ -2,6 +2,8 @@ package xyz.slkagura.ui.view.grafika;
 
 import android.opengl.GLSurfaceView;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 
 import xyz.slkagura.R;
@@ -32,9 +34,9 @@ public class GrafikaActivity extends BaseBindingActivity<ActivityGrafikaBinding>
     }
     
     @Override
-    protected void initDataBinding(List<BaseViewModel> viewModels) {
+    protected void initDataBinding(@NonNull List<BaseViewModel> list) {
         mViewModel = ViewModelUtil.get(this, GrafikaViewModel.class);
-        viewModels.add(mViewModel);
+        list.add(mViewModel);
     }
     
     @Override

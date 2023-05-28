@@ -1,5 +1,7 @@
 package xyz.slkagura.ui.view.permission;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 
 import xyz.slkagura.R;
@@ -18,9 +20,9 @@ public class PermissionActivity extends BaseBindingActivity<ActivityPermissionBi
     }
     
     @Override
-    protected void initDataBinding(List<BaseViewModel> viewModels) {
+    protected void initDataBinding(@NonNull List<BaseViewModel> list) {
         mViewModel = ViewModelUtil.get(this, PermissionViewModel.class);
-        viewModels.add(mViewModel);
+        list.add(mViewModel);
     }
     
     @Override

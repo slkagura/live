@@ -13,6 +13,7 @@ import xyz.slkagura.ui.view.click.ClickActivity
 import xyz.slkagura.ui.view.codec.CodecActivity
 import xyz.slkagura.ui.view.grafika.GrafikaActivity
 import xyz.slkagura.ui.view.live.LiveFragment
+import xyz.slkagura.ui.view.manager.PackageManagerActivity
 import xyz.slkagura.ui.view.opengl.OpenGLActivity
 import xyz.slkagura.ui.view.permission.PermissionActivity
 import xyz.slkagura.ui.view.sensor.SensorActivity
@@ -23,9 +24,9 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding?>() {
         return R.layout.activity_main
     }
     
-    override fun initDataBinding(viewModels: MutableList<BaseViewModel?>) {
+    override fun initDataBinding(list: MutableList<BaseViewModel?>) {
         mViewModel = ViewModelUtil.get(this, MainViewModel::class.java)
-        viewModels.add(mViewModel)
+        list.add(mViewModel)
     }
     
     override fun initViewBinding() {
@@ -74,6 +75,11 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding?>() {
     
     fun onGrafikaRebuildClick() {
         val intent = Intent(this, GrafikaActivity::class.java)
+        startActivity(intent)
+    }
+    
+    fun onPackageManagerClick() {
+        val intent = Intent(this, PackageManagerActivity::class.java)
         startActivity(intent)
     }
     

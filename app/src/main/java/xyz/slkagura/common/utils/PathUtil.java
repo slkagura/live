@@ -18,6 +18,8 @@ public class PathUtil {
     
     private static final File EXTERNAL_FILES = ContextUtil.getApplication().getExternalFilesDir(null);
     
+    private static final File EXTERNAL_DOWNLOADS = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+    
     private static final File CACHE = ContextUtil.getApplication().getCacheDir();
     
     private static final File EXTERNAL_CACHE = ContextUtil.getApplication().getExternalCacheDir();
@@ -38,6 +40,15 @@ public class PathUtil {
     
     public static String getExternalCanonical() {
         return getCanonical(EXTERNAL_STORAGE);
+    }
+    
+    public static String getExternalDownloadsCanonical() {
+        return getCanonical(EXTERNAL_DOWNLOADS);
+    }
+    
+    @NonNull
+    public static String getExternalDownloadsPath(@Nullable String... paths) {
+        return getPath(getExternalDownloadsCanonical(), true, paths);
     }
     
     public static String getExternalFilesCanonical() {

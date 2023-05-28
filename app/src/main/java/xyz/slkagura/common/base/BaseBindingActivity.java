@@ -51,7 +51,7 @@ public abstract class BaseBindingActivity<B extends ViewDataBinding> extends RxA
     
     protected abstract int initLayoutId();
     
-    protected abstract void initDataBinding(List<BaseViewModel> viewModels);
+    protected abstract void initDataBinding(@NonNull List<BaseViewModel> list);
     
     protected abstract void initViewBinding();
 }

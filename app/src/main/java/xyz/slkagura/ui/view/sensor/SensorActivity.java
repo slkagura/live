@@ -1,5 +1,7 @@
 package xyz.slkagura.ui.view.sensor;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 
 import xyz.slkagura.R;
@@ -22,9 +24,9 @@ public class SensorActivity extends BaseBindingActivity<ActivitySensorBinding> {
     }
     
     @Override
-    protected void initDataBinding(List<BaseViewModel> viewModels) {
+    protected void initDataBinding(@NonNull List<BaseViewModel> list) {
         mViewModel = ViewModelUtil.get(this, SensorViewModel.class);
-        viewModels.add(mViewModel);
+        list.add(mViewModel);
     }
     
     @Override

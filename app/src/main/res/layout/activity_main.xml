@@ -81,5 +81,17 @@
             android:onClick="@{() -> v.onGrafikaRebuildClick()}"
             android:text="Grafika (Rebuild)"
             />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/btn_manager"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/drawable_bg_default_btn"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:onClick="@{() -> v.onPackageManagerClick()}"
+            android:text="Package Manager"
+            android:textColor="@color/btn_text_default_selector"
+            />
     </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>

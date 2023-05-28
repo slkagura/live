@@ -4,6 +4,8 @@ import android.os.SystemClock;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 
 import xyz.slkagura.R;
@@ -21,9 +23,9 @@ public class ClickActivity extends BaseBindingActivity<ActivityClickBinding> {
     }
     
     @Override
-    protected void initDataBinding(List<BaseViewModel> viewModels) {
+    protected void initDataBinding(@NonNull List<BaseViewModel> list) {
         mViewModel = ViewModelUtil.get(this, ClickViewModel.class);
-        viewModels.add(mViewModel);
+        list.add(mViewModel);
     }
     
     @Override
